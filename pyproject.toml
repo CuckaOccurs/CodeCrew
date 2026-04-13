@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openpaws"
-version = "0.1.0"
+version = "1.4.0"
 description = "Beautiful terminal AI coding assistant that actually edits files."
 readme = "README.md"
 license = {text = "MIT"}
