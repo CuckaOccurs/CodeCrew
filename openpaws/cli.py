@@ -286,8 +286,8 @@ def main():
         console.print(Markdown(final_text))
         console.print()
 
-        if random.randint(1, 5) == 1:
-            console.print(f"🐾{random_cat_joke()}")
+        if random.randint(1, 20) == 1:
+            console.print(f"\n[dim]🐾 {random_cat_joke()}[/dim]")
 
 
 if __name__ == "__main__":

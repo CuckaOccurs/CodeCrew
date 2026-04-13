@@ -47,14 +47,28 @@ class OllamaProvider(BaseProvider):
 
         try:
             data = json.loads(resp.stdout)
-            msg = data.get("message", {"role": "assistant", "content": "Error: Empty response from Ollama."})
-            # Normalize tool_calls to match the format expected by Agent
+            msg = data.get("message", {})
+            content = msg.get("content", "")
+
+            # Handle empty content (common with local models)
+            if not content:
+                # Retry once to see if it was a fluke
+                resp_retry = subprocess.run(
+                    ["curl", "-s", "-X", "POST", f"{self.host}/api/chat",
+                     "-H", "Content-Type: application/json",
+                     "-d", json.dumps(payload)],
+                    capture_output=True, text=True, timeout=180,
+                )
+                data_retry = json.loads(resp_retry.stdout)
+                msg = data_retry.get("message", {"role": "assistant", "content": "..."})
+                
+            # Normalize tool_calls
             if "tool_calls" in msg and isinstance(msg["tool_calls"], list):
                 normalized = []
                 for tc in msg["tool_calls"]:
                     fn = tc.get("function", {})
                     if isinstance(fn.get("arguments"), str):
-                        normalized.append(tc)  # Already correct format
+                        normalized.append(tc)
                     elif isinstance(fn.get("arguments"), dict):
                         fn["arguments"] = json.dumps(fn["arguments"])
                         normalized.append(tc)
