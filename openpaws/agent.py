@@ -105,6 +105,8 @@ class Agent:
                         )
                         self.history.append({"role": "assistant", "content": msg})
                         return msg
+                    # Retry on empty response (consumes an iteration)
+                    continue
                 else:
                     recent_responses.clear()
 

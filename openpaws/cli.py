@@ -101,6 +101,8 @@ def print_help():
     table.add_column("Description", style="dim")
     table.add_row("/help", "Show this help")
     table.add_row("/cat", "Cat joke 🐱")
+    table.add_row("/focus <pattern>", "Search codebase — opens Focus panel")
+    table.add_row("/grep <pattern>", "Grep for pattern in files")
     table.add_row("/model", "Show current model")
     table.add_row("/model <name>", "Switch model (e.g., /model qwen3:14b)")
     table.add_row("/provider <name>", "Switch provider (ollama, openai, anthropic)")
@@ -229,7 +231,47 @@ def main():
                 console.print("[dim]Goodbye![/dim]")
                 break
             elif cmd == "/cat":
-                console.print(f"🐾{random_cat_joke()}")
+                console.print(f"🐾 {random_cat_joke()}")
+            elif cmd.startswith("/focus "):
+                pattern = user_input.split(" ", 1)[1].strip()
+                with console.status("🔍 Searching codebase...", spinner="dots"):
+                    result = execute_tool("focus", {"pattern": pattern}, str(work_dir))
+                if "focus_results" in result:
+                    lines = result["focus_results"].strip().split("\n")
+                    match_count = len([l for l in lines if ":" in l and not l.startswith("...")])
+                    header = f"Focus: \"{pattern}\" — {match_count} matches"
+                    console.print()
+                    console.print(Panel(
+                        result["focus_results"],
+                        title=header,
+                        border_style="cyan",
+                        padding=(0, 1),
+                    ))
+                    console.print()
+                elif "error" in result:
+                    console.print(f"[red]Focus error: {result['error']}[/red]")
+                else:
+                    console.print("[dim]No matches found.[/dim]")
+                continue
+            elif cmd.startswith("/grep "):
+                pattern = user_input.split(" ", 1)[1].strip()
+                with console.status("🔍 Grepping...", spinner="dots"):
+                    result = execute_tool("grep", {"pattern": pattern}, str(work_dir))
+                if "matches" in result:
+                    header = f"Grep: \"{pattern}\""
+                    console.print()
+                    console.print(Panel(
+                        result["matches"],
+                        title=header,
+                        border_style="green",
+                        padding=(0, 1),
+                    ))
+                    console.print()
+                elif "error" in result:
+                    console.print(f"[red]Grep error: {result['error']}[/red]")
+                else:
+                    console.print("[dim]No matches found.[/dim]")
+                continue
             elif cmd == "/help":
                 print_help()
             elif cmd.startswith("/model "):
