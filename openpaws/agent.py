@@ -98,11 +98,13 @@ class Agent:
                 if stripped in ("", "..."):
                     recent_responses.append(stripped)
                     if len(recent_responses) >= 3:
-                        self.history.append({
-                            "role": "assistant",
-                            "content": "⚠️ I'm having trouble getting a response from the model. Please try again."
-                        })
-                        return "⚠️ Model is not responding. Try again."
+                        msg = (
+                            "⚠️ The model isn't responding right now. "
+                            "Try using `/focus <pattern>` to search the codebase manually, "
+                            "or describe what you're looking for more specifically."
+                        )
+                        self.history.append({"role": "assistant", "content": msg})
+                        return msg
                 else:
                     recent_responses.clear()
 
