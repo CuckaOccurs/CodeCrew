@@ -283,7 +283,11 @@ def main():
             final_text = agent.chat(user_input)
 
         console.print()
-        console.print(Markdown(final_text))
+        if "model isn't responding" in final_text:
+            from rich.panel import Panel
+            console.print(Panel(final_text, title="⚠️ Model Error", border_style="red"))
+        else:
+            console.print(Markdown(final_text))
         console.print()
 
         if random.randint(1, 20) == 1:
