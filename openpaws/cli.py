@@ -326,7 +326,6 @@ def main():
 
         console.print()
         if "model isn't responding" in final_text:
-            from rich.panel import Panel
             console.print(Panel(final_text, title="⚠️ Model Error", border_style="red"))
         else:
             console.print(Markdown(final_text))
