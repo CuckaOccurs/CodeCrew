@@ -44,7 +44,8 @@ class Agent:
         """Send a message, handle tool calls, return the final text response."""
         self.history.append({"role": "user", "content": user_message})
         iterations = 0
-        seen_actions = []  # Track recent tool calls to detect loops
+        seen_actions = []
+        recent_responses = []
 
         while iterations < self.MAX_ITERATIONS:
             iterations += 1
@@ -61,17 +62,11 @@ class Agent:
                     name = function.get("name")
                     arguments = function.get("arguments", "{}")
 
-                    # Loop detection: if the same tool+args happened recently, break out
                     action_key = f"{name}:{arguments}"
                     if action_key in seen_actions:
-                        self.history.append({
-                            "role": "assistant",
-                            "content": f"⚠️ I seem to be stuck in a loop trying to {name}. Let me try a different approach or ask for clarification."
-                        })
-                        return f"⚠️ I seem to be stuck in a loop. Let me try a different approach."
+                        return "⚠️ I seem to be stuck in a loop trying to " + name + ". Let me try a different approach."
 
                     seen_actions.append(action_key)
-                    # Keep only last 5 actions in memory for loop detection
                     if len(seen_actions) > 5:
                         seen_actions.pop(0)
 
@@ -97,11 +92,24 @@ class Agent:
                 continue
             else:
                 final_text = response.get("content", "")
+                stripped = final_text.strip()
+
+                # Detect repeated empty/useless responses
+                if stripped in ("", "..."):
+                    recent_responses.append(stripped)
+                    if len(recent_responses) >= 3:
+                        self.history.append({
+                            "role": "assistant",
+                            "content": "⚠️ I'm having trouble getting a response from the model. Please try again."
+                        })
+                        return "⚠️ Model is not responding. Try again."
+                else:
+                    recent_responses.clear()
+
                 self.history.append({"role": "assistant", "content": final_text})
                 return final_text
 
-        # Max iterations reached
-        warning = "⚠️ I've reached my limit for tool calls without a clear answer. This usually means I'm stuck or the task is too complex for one go. Could you clarify what you're looking for?"
+        warning = "⚠️ I've reached my limit for tool calls without a clear answer. Could you clarify what you're looking for?"
         self.history.append({"role": "assistant", "content": warning})
         return warning
 
