@@ -52,17 +52,25 @@ class OllamaProvider(BaseProvider):
 
             # Handle empty content (common with local models)
             if not content:
-                # Retry once to see if it was a fluke
+                # Retry once with a shorter timeout
                 resp_retry = subprocess.run(
                     ["curl", "-s", "-X", "POST", f"{self.host}/api/chat",
                      "-H", "Content-Type: application/json",
                      "-d", json.dumps(payload)],
-                    capture_output=True, text=True, timeout=180,
+                    capture_output=True, text=True, timeout=60,
                 )
-                data_retry = json.loads(resp_retry.stdout)
-                msg = data_retry.get("message", {"role": "assistant", "content": "..."})
-                
-            # Normalize tool_calls
+                try:
+                    data_retry = json.loads(resp_retry.stdout)
+                    msg = data_retry.get("message", {})
+                    content = msg.get("content", "")
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+            # If still empty after retry, return a graceful fallback
+            if not content and "tool_calls" not in msg:
+                return {"role": "assistant", "content": "..."}
+
+            # Normalize tool_calls to match the format expected by Agent
             if "tool_calls" in msg and isinstance(msg["tool_calls"], list):
                 normalized = []
                 for tc in msg["tool_calls"]:
