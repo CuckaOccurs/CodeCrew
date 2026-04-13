@@ -172,7 +172,11 @@ def main():
         return
 
     # Handle Terminal (Default)
-    work_dir = Path(getattr(args, 'dir', '.')).resolve() if hasattr(args, 'dir') else Path.cwd()
+    try:
+        work_dir = Path(getattr(args, 'dir', '.')).resolve() if hasattr(args, 'dir') else Path.cwd()
+    except FileNotFoundError:
+        console.print("[red]Error: Working directory does not exist. Defaulting to home directory.[/red]")
+        work_dir = Path.home()
     
     # Load config, but let CLI flags override it
     saved_config = load_config()
