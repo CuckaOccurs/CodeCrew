@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openpaws"
+version = "0.1.0"
+description = "Beautiful terminal AI coding assistant that actually edits files."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "rich",
+    "requests",
+]
+
+[project.scripts]
+openpaws = "openpaws.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["openpaws*"]
