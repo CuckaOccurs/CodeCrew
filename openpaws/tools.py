@@ -539,7 +539,7 @@ def execute_tool(name, args, work_dir):
                     ["which", "rg"], capture_output=True, text=True, timeout=5,
                 )
                 has_rg = which_rg.returncode == 0
-                grep_args = ["-n", "--no-color", "-C", str(context)]
+                grep_args = ["-n", "-C", str(context)]
                 if file_type:
                     grep_args.extend(["-g", f"*{file_type}"])
                 grep_args.append(pattern)
@@ -566,7 +566,7 @@ def execute_tool(name, args, work_dir):
                     ["which", "rg"], capture_output=True, text=True, timeout=5,
                 )
                 has_rg = which_rg.returncode == 0
-                grep_cmd = ["rg", "-n", "--no-color"] if has_rg else ["grep", "-r", "-n"]
+                grep_cmd = ["rg", "-n"] if has_rg else ["grep", "-r", "-n"]
                 grep_cmd.append(pattern)
                 if not has_rg:
                     grep_cmd.append(target)
