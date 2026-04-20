@@ -29,7 +29,7 @@ Most terminal AI tools are ugly, cloud-dependent, or can't reliably modify files
 ## Quick Start
 
 ```bash
-git clone https://github.com/CuckaOccurs/codemaid.git
+git clone https://github.com/your-username/codemaid.git
 cd codemaid
 pip install -e .
 maid .                        # start in current directory
