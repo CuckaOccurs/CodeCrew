@@ -559,8 +559,9 @@ def main():
                 f"{_status()}"
             )
             # blank line + sep + todo lines + input = offset to input row
+            # prefix "  ❯  " = 2 + 2(wide ❯) + 2 = 6 cols; input starts at col 7
             input_row = 2 + todo_lines
-            sys.stdout.write(f"\033[u\033[{input_row}B\033[{5 + len(input_buffer)}G")
+            sys.stdout.write(f"\033[u\033[{input_row}B\033[{7 + len(input_buffer)}G")
         sys.stdout.write("\033[?25h")
         sys.stdout.flush()
 
