@@ -1,2 +1,2 @@
-# openpaws package initialization
+# codemaid package initialization (CODEMAID)
 # This file is required for Python to recognize this directory as a package.

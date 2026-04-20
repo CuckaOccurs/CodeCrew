@@ -1,4 +1,4 @@
-"""Tests for OpenPaws tools — security, correctness, and functionality."""
+"""Tests for CodeMAID tools — security, correctness, and functionality."""
 
 import json
 import tempfile
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from openpaws.tools import execute_tool, _check_confinement
+from codemaid.tools import execute_tool, _check_confinement
 
 
 # ---------------------------------------------------------------------------
@@ -216,10 +216,10 @@ class TestReadMultiple:
 
 class TestAgent:
     def test_agent_has_chat_method(self):
-        from openpaws.agent import Agent
+        from codemaid.agent import Agent
         assert hasattr(Agent, "chat")
         assert callable(Agent.chat)
 
     def test_agent_max_iterations(self):
-        from openpaws.agent import Agent
+        from codemaid.agent import Agent
         assert Agent.MAX_ITERATIONS == 20

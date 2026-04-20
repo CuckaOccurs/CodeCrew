@@ -1,14 +1,15 @@
 """
-OpenPaws Gateway — The bridge between OpenPaws and the world.
+CODEMAID Gateway — The bridge between CODEMAID and the world.
 Connects your local AI to Telegram, Discord, Slack, and Signal.
 """
 import json
+import os
 import signal
 import time
 import threading
 from pathlib import Path
 
-GATEWAY_DIR = Path.home() / ".config" / "openpaws"
+GATEWAY_DIR = Path.home() / ".config" / "codemaid"
 GATEWAY_DIR.mkdir(parents=True, exist_ok=True)
 
 class Gateway:
@@ -33,6 +34,14 @@ class Gateway:
 
     def add_bridge(self, platform, token, **kwargs):
         """Add a messaging bridge configuration."""
+        import warnings
+        warnings.warn(
+            f"⚠️  Security: The {platform} token will be stored in plain text at "
+            f"{self.config_path}. Consider setting it via an environment variable "
+            f"(e.g. CODEMAID_{platform.upper()}_TOKEN) and loading it at runtime instead.",
+            UserWarning,
+            stacklevel=2,
+        )
         self.config["bridges"][platform] = {
             "token": token,
             "enabled": True,
@@ -40,13 +49,14 @@ class Gateway:
         }
         self.save_config()
         print(f"✅ Added {platform} bridge configuration.")
+        print(f"   Token stored at: {self.config_path} (readable by any local process)")
 
     def start_all(self):
         """Start all configured bridges."""
         # Write PID file for stop command
-        self._pid_file.write_text(str(threading.get_ident()))
+        self._pid_file.write_text(str(os.getpid()))
 
-        print("🐱 OpenPaws Gateway starting...")
+        print("🐱 CODEMAID Gateway starting...")
         print(f"🧠 Model: {self.config['model']} | Provider: {self.config['provider']}")
 
         for platform, cfg in self.config["bridges"].items():
@@ -87,22 +97,32 @@ class Gateway:
 
     def setup_wizard(self):
         """Interactive wizard to configure the gateway."""
-        print("🐾 OpenPaws Gateway Setup Wizard")
-        print("Select a platform to configure:")
+        from rich.console import Console
+        from rich.prompt import Prompt, IntPrompt
+        from rich.panel import Panel
+        from rich.table import Table
+
+        c = Console()
+        c.print(Panel("🐾 CODEMAID Gateway Setup Wizard", style="bold cyan"))
+        c.print("Select a platform to configure:")
         platforms = ["Telegram", "Discord", "Slack", "Signal", "Done"]
 
+        table = Table(show_header=False, border_style="dim")
+        table.add_column(style="cyan", no_wrap=True)
         for i, p in enumerate(platforms):
-            print(f"{i+1}. {p}")
+            table.add_row(f"  {i+1}. {p}")
+        c.print(table)
 
         try:
-            choice = int(input("Choice: "))
-            platform = platforms[choice-1].lower()
+            choice = IntPrompt.ask("Choice", default=5)
+            platform = platforms[choice - 1].lower()
 
             if platform == "done":
                 return
 
-            token = input(f"Enter {platform} Bot Token: ")
+            token = Prompt.ask(f"Enter {platform} Bot Token", password=True)
             self.add_bridge(platform, token)
+            c.print(f"[green]✓ Added {platform} bridge configuration.[/green]")
 
         except (ValueError, IndexError):
-            print("Invalid choice.")
+            c.print("[red]Invalid choice.[/red]")

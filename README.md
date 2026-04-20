@@ -1,42 +1,149 @@
-# OpenPaws
+# CodeMAID
 
-A beautiful terminal-based AI coding assistant that actually edits files.
+A local-first terminal AI coding assistant with a full agentic loop. Runs fully offline with Ollama. Edits files, runs commands, searches the web, uses git — all from a clean hacker-grade terminal UI.
 
 ## Philosophy
 
-- Terminal AI assistants exist, but most look like they were designed in 1995 or can't actually edit files.
-- OpenPaws combines a clean terminal UI with reliable file editing and local LLM support.
+Most terminal AI tools are ugly, cloud-dependent, or can't reliably modify files. CodeMAID is built differently:
+
+- **Local-first** — works fully offline with Ollama. No telemetry, no cloud required.
+- **Actually edits files** — SEARCH/REPLACE with exact → fuzzy fallback, not just suggestions.
+- **Clean TUI** — streaming output, Knight Rider spinner, color-coded vault status bar.
+- **Agentic** — full tool-use loop with parallel tool execution, not just chatting.
 
 ## Features
 
-- Rich terminal UI with cat animations
-- Intelligent file editing (SEARCH/REPLACE parsing + fuzzy fallback)
-- Local LLM support via Ollama
-- Non-interactive mode for automation
-- Interactive chat with tool calling
-
-## Acknowledgments
-
-OpenPaws was built by studying what works in existing tools:
-
-- **Aider** — The SEARCH/REPLACE edit format and cascading edit strategies (exact → whitespace-flexible → fuzzy)
-- **OpenCode** — The clean terminal UI concept and local-first approach
-- **Goose** — Agent tool-calling workflows
-
-We built OpenPaws from scratch to be lightweight, beautiful, and reliable. No code was copied.
+- Rich terminal UI with real-time streaming token display
+- Multi-provider: Ollama (local), OpenAI-compatible APIs, Anthropic/Claude
+- Intelligent file editing with cascading fallback strategies
+- Shell command execution with 3-layer safety system (Vault/Litterbox)
+- Web search and page scraping
+- Git integration — status, diff, log, add, commit
+- Persistent memory across sessions
+- Session logging, checkpoints, and rewind
+- Skills system — extend agent behavior via plain Markdown files
+- Gateway mode — connect to Telegram, Discord, Slack, Signal
+- Prompt guard — detects and flags suspicious prompt injection
+- Slash commands, `!shell` passthrough, `@file` injection
 
 ## Quick Start
 
-### From Source
 ```bash
-cd ~/Projects/tools/OpenPaws
-pip install -e . --break-system-packages  # or use a venv
-openpaws .                    # Start in current directory
-openpaws --model gemma4:latest  # Specific model
+git clone https://github.com/CuckaOccurs/codemaid.git
+cd codemaid
+pip install -e .
+maid .                        # start in current directory
+maid --model qwen3:14b        # specific model
+maid --provider anthropic     # use Claude
 ```
 
-## Requirements
+### Requirements
 
 - Python 3.10+
-- Ollama running locally
-- Rich for the UI
+- [Ollama](https://ollama.com) running locally (for local/offline mode)
+- `rich` — installed automatically via pip
+
+## Usage
+
+```
+maid [dir]                    # start in directory (default: current)
+maid --provider ollama        # local Ollama (default)
+maid --provider anthropic     # Anthropic/Claude API
+maid --provider openai        # OpenAI-compatible API
+maid --model qwen3:14b        # override model
+maid -p "fix the tests"       # non-interactive one-shot mode
+```
+
+### Key Bindings
+
+| Key | Action |
+|-----|--------|
+| `Enter` | Send message |
+| `Tab` | Toggle shell / chat mode |
+| `Ctrl+P` | Cycle model |
+| `Ctrl+S` | Toggle sudo mode |
+| `Ctrl+D` | Toggle dry run |
+| `Ctrl+T` | Toggle thinking display |
+| `Ctrl+G` | Toggle prompt guard |
+| `ESC` | Interrupt AI / clear input |
+
+### Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/help` | Command list |
+| `/model [name]` | Show or switch model |
+| `/provider [name]` | Show or switch provider |
+| `/focus <pattern>` | Deep codebase search |
+| `/grep <pattern>` | Grep files |
+| `/plan` | Toggle plan mode |
+| `/vault` | Toggle command vault |
+| `/checkpoint` | Save checkpoint |
+| `/restore [n]` | Restore checkpoint |
+| `/rewind [n]` | Step back N turns |
+| `/compress` | Trim conversation history |
+| `/copy` | Copy last response to clipboard |
+| `/stats` | Session statistics |
+| `/clear` | Clear conversation |
+| `/trace` | Toggle trace mode |
+| `/exit` | Quit |
+
+## Architecture
+
+```
+┌─────────────────────────────────────┐
+│  CLI / TUI  (codemaid/cli/)         │
+│  Raw keypress loop · Rich rendering │
+│  Slash commands · Streaming display │
+└──────────────────┬──────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────┐
+│  Agent  (codemaid/agent.py)         │
+│  Tool-use loop · Parallel exec      │
+│  Checkpoint / rewind · Plan mode    │
+└────────────┬──────────────┬─────────┘
+             │              │
+             ▼              ▼
+    ┌──────────────┐  ┌────────────────────┐
+    │  Providers   │  │  Tools             │
+    │  Ollama      │  │  file · search     │
+    │  OpenAI      │  │  web · git         │
+    │  Anthropic   │  │  system · memory   │
+    └──────────────┘  └────────────────────┘
+                               │
+                               ▼
+                      ┌────────────────┐
+                      │  Vault         │
+                      │  Denylist mode │
+                      │  Allowlist     │
+                      │  Firejail opt. │
+                      └────────────────┘
+```
+
+Full technical reference in [Agents.md](Agents.md).
+
+## Safety
+
+CodeMAID sandboxes all shell commands through the Vault system:
+
+- **Denylist mode** (default) — blocks known-dangerous patterns: `rm -rf /`, `curl | sh`, reverse shells, credential harvesting
+- **Allowlist mode** — only permits explicitly approved command patterns
+- **Firejail** — optional container isolation if installed
+- **Sudo mode** — explicit toggle required, shown in status bar
+
+## Acknowledgments
+
+Built by studying what works in the ecosystem:
+
+- **Aider** — SEARCH/REPLACE edit format and cascading edit strategies (exact → whitespace-flexible → fuzzy)
+- **OpenCode** — clean terminal UI concept and local-first philosophy
+- **Goose** — agent tool-calling workflows
+
+Developed in close collaboration with **Claude** (the AI, not the CLI — though also the CLI).
+
+Built from scratch. No code copied.
+
+## License
+
+MIT
