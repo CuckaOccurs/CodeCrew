@@ -43,3 +43,4 @@ __pycache__/
 run_stress_test.py
 stress_test_v4.py
 test_ui_flicker.py
+tests/
