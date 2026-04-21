@@ -7,6 +7,7 @@ Three layers of protection:
 """
 
 import re
+import shlex
 import shutil
 import subprocess
 from typing import Tuple, Optional, List
@@ -173,22 +174,41 @@ WARNING_PATTERNS = [
 
 def validate_command(command: str, allowlist: bool = False, sudo_mode: bool = False) -> Tuple[str, str]:
     """
-    Validate a shell command against the safety policy.
-
-    Args:
-        command: The raw command string to validate.
-        allowlist: If True, only allow known-safe commands. If False (default),
-                   use denylist mode (block known-dangerous, allow rest).
-        sudo_mode: If True, bypass all blocks (full power).
-
-    Returns:
-        (severity, message) — one of SAFE/WARNING/BLOCKED with a description.
+    Validate a shell command against the safety policy using both token parsing
+    and pattern matching.
     """
     cmd = command.strip()
 
     if sudo_mode:
         return FREE, "SUDO MODE ACTIVE: Bypassing validation."
 
+    # 1. Token-based validation to catch sneaky chaining/redirection
+    try:
+        tokens = shlex.split(cmd)
+        if not tokens:
+            return FREE, "Empty command."
+        
+        # Check for shell metacharacters that shlex didn't catch or were intended as args
+        # especially dangerous ones like semicolon, pipe, etc.
+        dangerous_tokens = {";", "|", "&", ">", ">>", "<", "`", "$("}
+        for token in tokens:
+            for dt in dangerous_tokens:
+                if dt in token:
+                    return SAFE, f"🛡️ VAULT BLOCKED: Dangerous shell character '{dt}' detected in tokens."
+                    
+        # Check specific dangerous binaries
+        base_cmd = tokens[0].lower()
+        if base_cmd in ["rm", "mkfs", "dd", "chmod", "chown"] and len(tokens) > 1:
+            # Check for recursive/force flags on dangerous commands
+            args = "".join(tokens[1:])
+            if base_cmd == "rm" and ("-r" in args or "-f" in args):
+                if "/" in args or "~" in args or "*" in args:
+                    return SAFE, "🛡️ VAULT BLOCKED: Destructive 'rm' pattern detected."
+                    
+    except ValueError as e:
+        return SAFE, f"🛡️ VAULT BLOCKED: Malformed shell command ({e})."
+
+    # 2. Pattern matching (fallback for complex regexes)
     if allowlist:
         ok, pattern = _matches_allowlist(cmd)
         if ok:

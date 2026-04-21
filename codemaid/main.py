@@ -533,16 +533,18 @@ def main():
 
                 # Shell execution (TAB mode or ! prefix)
                 if st.shell_mode or user_input.startswith("!"):
-                    cmd = user_input[1:].strip() if user_input.startswith("!") else user_input
-                    severity, msg = validate_command(cmd, allowlist=st.allowlist_mode, sudo_mode=st.sudo_mode)
+                    import shlex
+                    cmd_raw = user_input[1:].strip() if user_input.startswith("!") else user_input
+                    severity, msg = validate_command(cmd_raw, allowlist=st.allowlist_mode, sudo_mode=st.sudo_mode)
                     st.last_vault = severity
                     if severity == VAULT:
-                        _add(f"  {_R}■ blocked{_Z}  {cmd[:72]}", raw=True)
+                        _add(f"  {_R}■ blocked{_Z}  {cmd_raw[:72]}", raw=True)
                         rnd.draw(); continue
                     if severity == CAGE:
-                        _add(f"  {_Y}⚠ cage{_Z}  {cmd[:72]}", raw=True)
+                        _add(f"  {_Y}⚠ cage{_Z}  {cmd_raw[:72]}", raw=True)
                     try:
-                        proc = subprocess.run(cmd, shell=True, capture_output=True, text=True,
+                        cmd_args = shlex.split(cmd_raw)
+                        proc = subprocess.run(cmd_args, capture_output=True, text=True,
                                               cwd=str(work_dir), timeout=30)
                         out = (proc.stdout + proc.stderr).strip()
                         _add(out or "(no output)")
@@ -550,14 +552,22 @@ def main():
                         _add(f"  {e}", style=THEME["red"])
                     rnd.draw(); continue
 
-                # Syntax guard — catch bare shell commands before sending to AI
+                # Syntax guard — catch bare shell commands and "Dirty Code" before sending to AI
                 if st.guard_mode:
-                    from codemaid.prompt_guard import check_looks_like_command
-                    cmd_issue = check_looks_like_command(user_input)
-                    if cmd_issue:
-                        _add(f"  {_Y}⚠ {cmd_issue.description}{_Z}", raw=True)
+                    from codemaid.prompt_guard import scan_prompt
+                    # Estimate current history size for context guard
+                    hist_size = sum(len(str(m).encode()) for m in agent.history)
+                    issues = scan_prompt(user_input, hist_size)
+                    if issues:
+                        for issue in issues:
+                            color = _R if issue.severity == "CRITICAL" else _Y
+                            _add(f"  {color}⚠ {issue.description}{_Z}", raw=True)
+                            _add(f"    {_D}Suggestion: {issue.suggestion}{_Z}", raw=True)
                         rnd.draw()
-                        continue
+                        if any(i.severity == "CRITICAL" for i in issues):
+                            continue # Block critical breaches
+                        # For warnings, we let them through but they've been flagged
+
 
                 # AI mode — run in thread so animation loop stays alive
                 with _draw_lock:

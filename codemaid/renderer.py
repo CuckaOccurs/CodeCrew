@@ -12,7 +12,7 @@ Layout:
 """
 import shutil
 
-from .config import _A, _P, _R, _I, _D, _Z
+from .config import _A, _P, _R, _I, _D, _Z, _G, _Y, _T, _tool_label
 
 _DIM  = "\033[38;2;30;50;65m"   # bar/border — deep blue-grey, Night Owl
 
@@ -33,58 +33,59 @@ class Renderer:
         self.render_fn    = render_fn
 
     def on_resize(self):
-        pass
+        # Force a full screen clear on resize to prevent ghosting
+        import sys
+        sys.stdout.write("\033[2J\033[H")
+        sys.stdout.flush()
+        self.draw()
 
     # ── status bar (top) ─────────────────────────────────────────────────────
 
     def _status_bar(self, w: int) -> str:
-        dot_on  = f"{_I}●{_Z}"
-        dot_off = f"{_R}●{_Z}"
+        # RGB Status logic: GREEN (Ready), YELLOW (No local RTFM), RED (Offline)
+        status_color = _G
+        if not self.st.svc_pi or not self.st.svc_ollama:
+            status_color = _R
+        elif not self.load_status or not self.load_status.get("instructions"):
+            status_color = _Y
 
-        # name tile
+        dot = f"{status_color}●{_Z}"
         display_name = self.st.session_name or (self.profile_name or 'maid').capitalize()
         name = f"{_A}{display_name}{_Z}"
 
-        # service dots
-        pi_dot     = dot_on if self.st.svc_pi     else dot_off
-        ollama_dot = dot_on if self.st.svc_ollama else dot_off
+        pi_stat     = f"{_G}Pi{_Z}" if self.st.svc_pi else f"{_R}Pi{_Z}"
+        ollama_stat = f"{_G}Oll{_Z}" if self.st.svc_ollama else f"{_R}Oll{_Z}"
 
-        # loaded context summary
-        ls = self.load_status or {}
-        parts = []
-        if ls.get("skills"):    parts.append(f"S:{ls.get('skill_count',0)}")
-        if ls.get("rules"):     parts.append(f"R:{ls.get('rule_count',0)}")
-        if ls.get("instructions"): parts.append("I")
-        loaded = f"{_D}  {('  '.join(parts)) or '—'}{_Z}"
-
-        sep = f"{_DIM} │ {_Z}"
-        bar = (f"{_DIM}─{_Z} {name}{sep}"
-               f"Pi {pi_dot}{sep}"
-               f"Ollama {ollama_dot}"
-               f"{loaded}")
-        return bar
+        sep = f"{_DIM}│{_Z}"
+        ctx_k = sum(len(str(m).encode()) for m in (self.agent.history if self.agent else [])) // 1024
+        
+        return (f" {dot} {name} {sep} {pi_stat} {sep} {ollama_stat} {sep} "
+                f"{_D}Ctx: {ctx_k}K/50K{_Z}")
 
     # ── activity overlay lines ───────────────────────────────────────────────
 
     def _overlay_lines(self, w: int) -> list[str]:
         lines = []
 
-        # queued messages
-        for msg in self.st.tool_log:
-            icon, label = msg if isinstance(msg, tuple) else ("·", msg)
-            lines.append(f"  {_D}{icon}  {label[:w-6]}{_Z}")
+        # ── LIVE TASK MAP ──
+        if self.st.is_thinking:
+            lines.append(f"  {_D}┌── TASK MAP ───────────────────────────{_Z}")
+            if self.st.current_tool:
+                label, _ = self.st.current_tool
+                lines.append(f"  {_D}│{_Z} {_G}▶ ACTIVE:{_Z} {label[:w-15]}")
 
-        # current tool (most prominent)
-        if self.st.current_tool:
-            label, _ = self.st.current_tool
-            lines.append(f"  {_I}⚒  {label[:w-6]}{_Z}")
+            recent_logs = self.st.tool_log[-2:]
+            for icon, label in recent_logs:
+                lines.append(f"  {_D}│{_Z} {_D}✓ DONE:   {label[:w-15]}{_Z}")
+            lines.append(f"  {_D}└──────────────────────────────────────{_Z}")
 
         # thinking spinner
         if self.st.is_thinking:
             sp = _SPIN[self.st.spin_frame % 10]
-            lines.append(f"  {_R}●{_Z} {_A}{sp}{_Z} {_P}thinking...{_Z}")
+            lines.append(f"  {_P}{sp} The Crew is analyzing...{_Z}")
 
         return lines
+
 
     # ── draw ─────────────────────────────────────────────────────────────────
 
@@ -104,37 +105,55 @@ class Renderer:
             end    = total - offset
             start  = max(0, end - history_h)
 
-            out = "\033[H\033[2J"
+            # Move to home instead of clear to reduce flicker
+            # \033[H = move to top-left
+            out = "\033[H"
 
             # status bar
-            out += self._status_bar(w) + "\n"
+            out += self._status_bar(w) + "\033[K\n"
 
-            # chat history
+            # chat history - we clear each line as we go with \033[K
+            lines_printed = 0
             for _, ansi_str in self.history[start:end]:
-                out += ansi_str
-
-            # pad to push overlay flush against the bars
-            rendered_lines = sum(s.count("\n") + 1 for _, s in self.history[start:end])
-            pad = history_h - rendered_lines
-            if pad > 0:
-                out += "\n" * pad
+                # We need to be careful with multi-line strings
+                for line in ansi_str.splitlines():
+                    if lines_printed < history_h:
+                        out += line[:w] + "\033[K\n"
+                        lines_printed += 1
+            
+            # Fill remaining history area
+            while lines_printed < history_h:
+                out += "\033[K\n"
+                lines_printed += 1
 
             # top bar
-            out += bar + "\n"
+            out += bar + "\033[K\n"
 
             # activity overlay
             for line in overlay:
-                out += line + "\n"
+                out += line + "\033[K\n"
 
             # middle bar
-            out += bar + "\n"
+            out += bar + "\033[K\n"
 
             # input
             mode = "!" if self.st.shell_mode else ">"
-            out += f"  {_A}{mode}{_Z} {self.st.input_buffer}\n"
+            # Ensure input doesn't overflow terminal width and cause wrapping issues
+            input_text = self.st.input_buffer
+            max_input_w = w - 6
+            if len(input_text) > max_input_w:
+                input_text = "..." + input_text[-(max_input_w-3):]
+            
+            input_line = f"  {_A}{mode}{_Z} {input_text}"
+            out += input_line + "\033[K\n"
 
             # bottom bar
-            out += bar
+            out += bar + "\033[K"
+
+            # park cursor at end of input buffer
+            input_row = 1 + history_h + 1 + len(overlay) + 1 + 1
+            cursor_col = 4 + len(input_text)
+            out += f"\033[{input_row};{cursor_col}H"
 
             import sys
             sys.stdout.write(out)

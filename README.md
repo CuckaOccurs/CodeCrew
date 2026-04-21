@@ -1,155 +1,33 @@
-# CodeMAID
+# 🚢 CodeCrew v4.2.0
+**The Spatial-Contextual AI Operating System**
 
-<p align="center">
-  <img src="assets/mascot.png" alt="CodeMAID mascot" width="480"/>
-</p>
+> *"The Maid handles the keys; The Mop handles the memory; The Architect handles the world."*
 
-A local-first terminal AI coding assistant with a full agentic loop. Runs fully offline with Ollama. Edits files, runs commands, searches the web, uses git — all from a clean hacker-grade terminal UI.
+---
 
-## Philosophy
+## 🛰️ Overview
+CodeCrew is not just a coding assistant; it is a networked "Crew" of specialized AI personas that adapt dynamically to your workspace. By leveraging the **Maid (TUI)** and the **MOP (Context Engine)**, CodeCrew ensures that every project folder has its own "soul," its own "mission," and a perfectly maintained **50KB memory window** to prevent hallucinations.
 
-Most terminal AI tools are ugly, cloud-dependent, or can't reliably modify files. CodeMAID is built differently:
+## 🧠 The Philosophy: Spatial Context
+Most AI systems lose their minds when a project gets too big. CodeCrew solves this by tying intelligence to **Location**.
+- **The Maid (Terminal)**: Your interface. It moves between "rooms" (folders).
+- **The MOP (Manager of Personas)**: The background engine. It "mops the floor" by clearing irrelevant history and loading the specific **RTFM.md** manual for the current folder.
+- **The 50KB Rule**: We "Sip, don't Gulp." By capping context at 50KB, we ensure the AI never hits the "hallucination wall."
 
-- **Local-first** — works fully offline with Ollama. No telemetry, no cloud required.
-- **Actually edits files** — SEARCH/REPLACE with exact → fuzzy fallback, not just suggestions.
-- **Clean TUI** — streaming output, Knight Rider spinner, color-coded vault status bar.
-- **Agentic** — full tool-use loop with parallel tool execution, not just chatting.
+## 🛠️ The Crew (Personas)
+CodeCrew allows you to maintain a diverse team across your system:
+- **Coder**: Elite autonomous auditing and repair.
+- **IT Specialist**: System-wide repairs and diagnostics.
+- **Tutor**: Educational guidance and documentation.
+- **Counselor**: A creative sounding board for "Dropping Dots" and brainstorming.
 
-## Features
+## 📂 Structure
+- `/codemaid`: The core engine (The Maid).
+- `/codemaid/sessions`: The MOP and SQLite persistence layer.
+- `/docs`: Audit reports and system manuals.
+- `RTFM.md`: The local manual that defines the Crew's "Name, Rank, and Position" for this folder.
 
-- Rich terminal UI with real-time streaming token display
-- Multi-provider: Ollama (local), OpenAI-compatible APIs, Anthropic/Claude
-- Intelligent file editing with cascading fallback strategies
-- Shell command execution with 3-layer safety system (Vault)
-- Web search and page scraping
-- Git integration — status, diff, log, add, commit
-- Persistent memory across sessions
-- Session logging, checkpoints, and rewind
-- Skills system — extend agent behavior via plain Markdown files
-- Gateway mode — connect to Telegram, Discord, Slack, Signal
-- Prompt guard — detects and flags suspicious prompt injection
-- Slash commands, `!shell` passthrough, `@file` injection
-
-## Quick Start
-
-```bash
-git clone https://github.com/your-username/codemaid.git
-cd codemaid
-pip install -e .
-maid .                        # start in current directory
-maid --model qwen3:14b        # specific model
-maid --provider anthropic     # use Claude
-```
-
-### Requirements
-
-- Python 3.10+
-- [Ollama](https://ollama.com) running locally (for local/offline mode)
-- `rich` — installed automatically via pip
-
-## Usage
-
-```
-maid [dir]                    # start in directory (default: current)
-maid --provider ollama        # local Ollama (default)
-maid --provider anthropic     # Anthropic/Claude API
-maid --provider openai        # OpenAI-compatible API
-maid --model qwen3:14b        # override model
-maid -p "fix the tests"       # non-interactive one-shot mode
-```
-
-### Key Bindings
-
-| Key | Action |
-|-----|--------|
-| `Enter` | Send message |
-| `Tab` | Toggle shell / chat mode |
-| `Ctrl+P` | Cycle model |
-| `Ctrl+S` | Toggle sudo mode |
-| `Ctrl+D` | Toggle dry run |
-| `Ctrl+T` | Toggle thinking display |
-| `Ctrl+G` | Toggle prompt guard |
-| `Ctrl+O` | Expand / collapse tool call detail |
-| `ESC` | Interrupt AI / clear input |
-
-### Slash Commands
-
-| Command | Description |
-|---------|-------------|
-| `/help` | Command list |
-| `/persona [name]` | Show or switch MOP persona |
-| `/model [name]` | Show or switch model |
-| `/provider [name]` | Show or switch provider |
-| `/focus <pattern>` | Deep codebase search |
-| `/grep <pattern>` | Grep files |
-| `/plan` | Toggle plan mode |
-| `/vault` | Toggle command vault |
-| `/checkpoint` | Save checkpoint |
-| `/restore [n]` | Restore checkpoint |
-| `/rewind [n]` | Step back N turns |
-| `/compress` | Trim conversation history |
-| `/copy` | Copy last response to clipboard |
-| `/stats` | Session statistics |
-| `/clear` | Clear conversation |
-| `/trace` | Toggle trace mode |
-| `/exit` | Quit |
-
-## Architecture
-
-```
-┌─────────────────────────────────────┐
-│  CLI / TUI  (codemaid/cli/)         │
-│  Raw keypress loop · Rich rendering │
-│  Slash commands · Streaming display │
-└──────────────────┬──────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────┐
-│  Agent  (codemaid/agent.py)         │
-│  Tool-use loop · Parallel exec      │
-│  Checkpoint / rewind · Plan mode    │
-└────────────┬──────────────┬─────────┘
-             │              │
-             ▼              ▼
-    ┌──────────────┐  ┌────────────────────┐
-    │  Providers   │  │  Tools             │
-    │  Ollama      │  │  file · search     │
-    │  OpenAI      │  │  web · git         │
-    │  Anthropic   │  │  system · memory   │
-    └──────────────┘  └────────────────────┘
-                               │
-                               ▼
-                      ┌────────────────┐
-                      │  Vault         │
-                      │  Denylist mode │
-                      │  Allowlist     │
-                      │  Firejail opt. │
-                      └────────────────┘
-```
-
-Full technical reference in [MOP.md](MOP.md).
-
-## Safety
-
-CodeMAID sandboxes all shell commands through the Vault system:
-
-- **Denylist mode** (default) — blocks known-dangerous patterns: `rm -rf /`, `curl | sh`, reverse shells, credential harvesting
-- **Allowlist mode** — only permits explicitly approved command patterns
-- **Firejail** — optional container isolation if installed
-- **Sudo mode** — explicit toggle required, shown in status bar
-
-## Acknowledgments
-
-Built by studying what works in the ecosystem:
-
-- **Aider** — SEARCH/REPLACE edit format and cascading edit strategies (exact → whitespace-flexible → fuzzy)
-- **OpenCode** — clean terminal UI concept and local-first philosophy
-- **Goose** — agent tool-calling workflows
-
-Developed in close collaboration with **Claude** (the AI, not the CLI — though also the CLI).
-
-Built from scratch. No code copied.
-
-## License
-
-MIT
+---
+**Status**: ACTIVE & HARDENED
+**Lead Architect**: Michael Robinson (cuckaoccurs)
+**The Crew**: CodeDoctor & The CodeCrew Controllers

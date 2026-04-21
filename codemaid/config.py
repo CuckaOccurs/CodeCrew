@@ -39,6 +39,8 @@ console = Console(theme=Theme({
     "cyan":         THEME["teal"],
     "bold cyan":    THEME["teal"] + " bold",
     "red":          THEME["red"],
+    "green":        THEME["green"],
+    "yellow":       THEME["brown"],
     "dim":          THEME["dim"],
     "info":         THEME["purple"],
 }))
