@@ -34,3 +34,12 @@ exports/
 # Secrets / keys
 *.env
 .env*
+docs/document_inventory.md
+stress_test_lab/
+*.pyc
+__pycache__/
+.claude/
+*.html
+run_stress_test.py
+stress_test_v4.py
+test_ui_flicker.py
