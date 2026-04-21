@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+.aider*
+
+# Temp / OS
+*.tmp
+.directory
+
+# Temp / OS extras
+.DS_Store
+
+# Personal / dev scratch dirs
+CodeMAID-Fluff/
+MOP/
+StrippedCode/
+exports/
+
+# Secrets / keys
+*.env
+.env*

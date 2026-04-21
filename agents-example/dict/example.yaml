@@ -1,0 +1,9 @@
+# ~/.agents/dict/example.yaml
+# Word substitution dictionary — applied to writing output via /lean or pestdict tool
+# Format: "find phrase": "replace with"
+
+substitutions:
+  "utilize": "use"
+  "in order to": "to"
+  "at this point in time": "now"
+  "due to the fact that": "because"
