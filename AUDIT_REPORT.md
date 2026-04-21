@@ -27,7 +27,7 @@ CodeMAID is a terminal-based AI coding assistant designed for local-first, agent
 
 ### High-Priority Issues
 - **Command Validation**: Upgraded to token-based analysis to prevent obfuscation bypasses (e.g., using `;` or `|` within strings).
-- **Redundant Code**: Consolidated scattered legacy versions (OpenPaws, BetaPaws) into a unified `/Projects/apps/CodeMAID/` directory.
+- **Redundant Code**: Consolidated scattered legacy versions (CodeCrew, CodeCrew) into a unified `/Projects/apps/CodeMAID/` directory.
 
 ### Security Concerns
 - **Audit Logs**: Currently stored in plain text. Recommended enhancement: Add HMAC integrity checks.
@@ -36,7 +36,7 @@ CodeMAID is a terminal-based AI coding assistant designed for local-first, agent
 ---
 
 ## 3. Applied Changes
-1.  **Rebranding**: Global rename of all legacy "OpenPaws" and "BetaPaws" references to "CodeMAID".
+1.  **Rebranding**: Global rename of all legacy "CodeCrew" and "CodeCrew" references to "CodeMAID".
 2.  **Consolidation**: Merged all functional code into `/home/cuckaoccurs/Projects/apps/CodeMAID/`.
 3.  **Backups**: All scattered `.agents` and related hidden folders backed up to `~/.agents/BACKUP/`.
 4.  **Hardening**: 

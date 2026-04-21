@@ -17,18 +17,18 @@
 
 ---
 
-## All CodeMAID/OpenPaws Locations Found
+## All CodeMAID/CodeCrew Locations Found
 
 | Location | Drive | What it is | Version | Action |
 |----------|-------|-----------|---------|--------|
 | `Projects/CodeMAID/codemaid/` | home | **ACTIVE SOURCE** | v3 current | Keep |
 | `Projects/CodeMAID/resources/` | home | Dead flat copy inside active project | v1 (Apr 15) | **DELETE** |
-| `Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/openpaws/` | home | Old git repo, intermediate version | v2 (Apr 17-18) | Decide* |
-| `Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/backup-live-pre-v2/openpaws/` | home | Flat copy inside old git repo | v1 (Apr 15) | **DELETE** |
+| `Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/codecrew/` | home | Old git repo, intermediate version | v2 (Apr 17-18) | Decide* |
+| `Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/backup-live-pre-v2/codecrew/` | home | Flat copy inside old git repo | v1 (Apr 15) | **DELETE** |
 | `Projects/ToDo/SessionExports/CodeMaid/` | home | HTML export + reference doc | n/a | Keep |
-| `.local/share/Trash/files/openpaws (1)/openpaws` | home | Already in trash | old | **EMPTY TRASH** |
+| `.local/share/Trash/files/codecrew (1)/codecrew` | home | Already in trash | old | **EMPTY TRASH** |
 | `.config/codemaid/` | home | Active config dir | current | Keep |
-| `.config/openpaws/` | home | Orphaned old config | old | Delete after check |
+| `.config/codecrew/` | home | Orphaned old config | old | Delete after check |
 | `.local/share/pipx/venvs/codemaid/` | home | Installed binary venv | current | Keep |
 | `.agents/` | home | Runtime data (db, skills, sessions) | current | Keep |
 | `agents/sessions/` | home | New AgentSessionLogger module (in dev) | new | Keep — not a duplicate |
@@ -41,13 +41,13 @@
 ## Version Map
 
 ```
-Apr 15  →  v1 "flat openpaws"
+Apr 15  →  v1 "flat codecrew"
             Single cli.py (341 lines), single tools.py (412 lines)
             Locations: resources/ (×2 — home and Data), backup-live-pre-v2/
 
-Apr 17-18 → v2 "modular openpaws"
+Apr 17-18 → v2 "modular codecrew"
             cli/ and tools/ split out
-            Location: LinuxSystemDiagnostics/.../openpaws/
+            Location: LinuxSystemDiagnostics/.../codecrew/
 
 Apr 18-19 → v3 "codemaid" (CURRENT)
             Full modular: cli/, tools/, sessions/, profiles/
@@ -71,10 +71,10 @@ rm -rf /mnt/Data/Projects/apps/CodeMAID/resources/
 rm -rf ~/Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/backup-live-pre-v2/
 
 # 4. Openpaws backup junk files (46-byte hello.py files from testing)
-rm -rf ~/.config/openpaws/backups/
+rm -rf ~/.config/codecrew/backups/
 
 # 5. Empty the trash
-rm -rf ~/.local/share/Trash/files/"openpaws (1)"
+rm -rf ~/.local/share/Trash/files/"codecrew (1)"
 ```
 
 ---
@@ -84,7 +84,7 @@ rm -rf ~/.local/share/Trash/files/"openpaws (1)"
 ### * LinuxSystemDiagnostics old git repo
 **Path:** `~/Projects/LinuxSystemDiagnostics/THE-TODO/CodeMAID/CodeM.A.I.D/`
 
-Contains two Claude Code session transcripts from the OpenPaws dev era:
+Contains two Claude Code session transcripts from the CodeCrew dev era:
 - `notgoingtohell.txt` (758 lines) — old Claude Code session debugging the streaming/line rendering bug
 - `shadypestofiles-nolikedaylight.txt` (168 lines) — another session log
 - `.aider.chat.history.md` (55KB) — aider session history
@@ -118,11 +118,11 @@ rm -rf /mnt/Data/Projects/apps/CodeMAID/BACKUP/
 
 ---
 
-### ~/.config/openpaws/ audit.log
-110KB audit log from the openpaws era. Useful only if you want to grep old command history. Otherwise:
+### ~/.config/codecrew/ audit.log
+110KB audit log from the codecrew era. Useful only if you want to grep old command history. Otherwise:
 
 ```bash
-rm -rf ~/.config/openpaws/
+rm -rf ~/.config/codecrew/
 ```
 
 ---

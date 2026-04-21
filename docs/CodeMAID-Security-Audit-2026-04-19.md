@@ -194,13 +194,13 @@ Users can attempt vault bypass edits indefinitely with no lockout or exponential
 **Location:** `.github/workflows/ci.yml:30,35`
 
 ```yaml
-ruff check openpaws/   # Should be codemaid/
-pytest --cov=openpaws  # Should be codemaid/
+ruff check codecrew/   # Should be codemaid/
+pytest --cov=codecrew  # Should be codemaid/
 ```
 
 CI linting and coverage run against a nonexistent module. Quality gates are not actually enforced.
 
-**Fix:** Replace `openpaws` with `codemaid` throughout the CI config.
+**Fix:** Replace `codecrew` with `codemaid` throughout the CI config.
 
 ---
 
@@ -272,7 +272,7 @@ Timeout values (5, 10, 15, 20, 30s), token limits (4, 20_000, 24_000), and outpu
 2. Migrate API key storage to environment variables; remove from JSON config
 3. Add `.agents/` and `~/.config/codemaid/` to `.gitignore`
 4. Replace all `shell=True` subprocess calls with `shlex.split()` + `shell=False`
-5. Fix CI pipeline module name: `openpaws` → `codemaid`
+5. Fix CI pipeline module name: `codecrew` → `codemaid`
 
 ### Short Term
 6. Add symlink check to `_check_confinement()`

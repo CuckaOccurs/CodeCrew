@@ -25,7 +25,7 @@ This list consolidates necessary updates, consistency fixes, and project-specifi
 ## 🛠️ Project-Specific Repairs
 
 ### CodeMAID (High Priority)
-- **Consolidation**: Complete the merge of "openpaws", "paws", and "codemaid" into a single, clean latest-version copy in `Projects/apps/CodeM.A.I.D/`.
+- **Consolidation**: Complete the merge of "codecrew", "paws", and "codemaid" into a single, clean latest-version copy in `Projects/apps/CodeM.A.I.D/`.
 - **System File Cleanup**: Identify and remove any system-installed library files that were accidentally copied into the project folders.
 
 ### MusicMe

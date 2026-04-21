@@ -74,7 +74,7 @@ Same tool, different brain. No new software, no new cost.
   # Full session with Ollama
   aider --model ollama/qwen3:14b
   ```
-- **Note:** You already have aider history in your old openpaws dev files — you've used this before.
+- **Note:** You already have aider history in your old codecrew dev files — you've used this before.
 
 ---
 
