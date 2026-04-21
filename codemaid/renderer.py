@@ -67,17 +67,19 @@ class Renderer:
     def _overlay_lines(self, w: int) -> list[str]:
         lines = []
 
-        # ── LIVE TASK MAP ──
-        if self.st.is_thinking:
-            lines.append(f"  {_D}┌── TASK MAP ───────────────────────────{_Z}")
-            if self.st.current_tool:
-                label, _ = self.st.current_tool
-                lines.append(f"  {_D}│{_Z} {_G}▶ ACTIVE:{_Z} {label[:w-15]}")
+        # ── CODECREW MISSION CONTROL ──
+        # Fetch status from the heartbeat monitor if available in st
+        network_status = getattr(self.st, "network_status", {})
+        
+        lines.append(f"  {_D}┌── CODECREW MISSION CONTROL ───────────────{_Z}")
+        if not network_status:
+            lines.append(f"  {_D}│{_Z} {_Y}Network Idle - No active tasks.{_Z}")
+        
+        for name, status in network_status.items():
+            color = _G if status.get("health") == "GREEN" else (_Y if status.get("health") == "YELLOW" else _R)
+            lines.append(f"  {_D}│{_Z} {color}[●]{_Z} {name.upper()[:10]} | {status.get('active_task', 'Idle')}")
 
-            recent_logs = self.st.tool_log[-2:]
-            for icon, label in recent_logs:
-                lines.append(f"  {_D}│{_Z} {_D}✓ DONE:   {label[:w-15]}{_Z}")
-            lines.append(f"  {_D}└──────────────────────────────────────{_Z}")
+        lines.append(f"  {_D}└───────────────────────────────────────────{_Z}")
 
         # thinking spinner
         if self.st.is_thinking:

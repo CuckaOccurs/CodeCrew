@@ -1,6 +1,24 @@
-"""
-CODEMAID CLI — Clean terminal UI.
-"""
+# --- CodeCrew IDE Engine ---
+import threading
+import socket
+
+def bridge_listener(st):
+    # Local socket listener for the WebUI Bridge
+    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    socket_path = "/tmp/codecrew.sock"
+    if os.path.exists(socket_path): os.remove(socket_path)
+    server.bind(socket_path)
+    server.listen(1)
+    while True:
+        conn, _ = server.accept()
+        data = conn.recv(1024)
+        # Handle the command payload here
+        conn.send(b"ACK")
+        conn.close()
+
+# Start the listener in the main entry
+# thread = threading.Thread(target=bridge_listener, args=(st,), daemon=True)
+# thread.start()
 
 import getpass
 import os
