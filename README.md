@@ -1,33 +1,117 @@
-# 🚢 CodeCrew v4.2.0
-**The Spatial-Contextual AI Operating System**
+# CODEMAID — CodeCrew IDE Engine
 
-> *"The Maid handles the keys; The Mop handles the memory; The Architect handles the world."*
+A terminal AI coding assistant that interfaces with CodeCrew.
 
----
+## Architecture
 
-## 🛰️ Overview
-CodeCrew is not just a coding assistant; it is a networked "Crew" of specialized AI personas that adapt dynamically to your workspace. By leveraging the **Maid (TUI)** and the **MOP (Context Engine)**, CodeCrew ensures that every project folder has its own "soul," its own "mission," and a perfectly maintained **50KB memory window** to prevent hallucinations.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CodeCrew WebUI                            │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  WebUI Bridge (bridge.py)                        │
+│  - /execute, /status endpoints                                   │
+│  - Forwards requests to CodeCrew IDE                             │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────────┐
+│          CodeMAID Engine (pipx/installable)                      │
+│  - CLI tool: codemaid/maid                                        │
+│  - Provides: audit, execute, status subcommands                   │
+│  - Uses: Ollama API, task definitions                             │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-## 🧠 The Philosophy: Spatial Context
-Most AI systems lose their minds when a project gets too big. CodeCrew solves this by tying intelligence to **Location**.
-- **The Maid (Terminal)**: Your interface. It moves between "rooms" (folders).
-- **The MOP (Manager of Personas)**: The background engine. It "mops the floor" by clearing irrelevant history and loading the specific **RTFM.md** manual for the current folder.
-- **The 50KB Rule**: We "Sip, don't Gulp." By capping context at 50KB, we ensure the AI never hits the "hallucination wall."
+## Quick Start
 
-## 🛠️ The Crew (Personas)
-CodeCrew allows you to maintain a diverse team across your system:
-- **Coder**: Elite autonomous auditing and repair.
-- **IT Specialist**: System-wide repairs and diagnostics.
-- **Tutor**: Educational guidance and documentation.
-- **Counselor**: A creative sounding board for "Dropping Dots" and brainstorming.
+1. **Install CodeMAID:**
 
-## 📂 Structure
-- `/codemaid`: The core engine (The Maid).
-- `/codemaid/sessions`: The MOP and SQLite persistence layer.
-- `/docs`: Audit reports and system manuals.
-- `RTFM.md`: The local manual that defines the Crew's "Name, Rank, and Position" for this folder.
+```bash
+pipx install /home/cuckaoccurs/Projects/apps/CodeMAID
+# OR
+pip install -e /home/cuckaoccurs/Projects/apps/CodeMAID
+```
 
----
-**Status**: ACTIVE & HARDENED
-**Lead Architect**: Michael Robinson (cuckaoccurs)
-**The Crew**: CodeDoctor & The CodeCrew Controllers
+2. **Configure WebUI:**
+
+Add to `/home/cuckaoccurs/Projects/web-ui/requirements.txt`:
+```
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+requests>=2.28.0
+pydantic>=2.0.0
+```
+
+3. **Restart WebUI:**
+```bash
+cd /home/cuckaoccurs/Projects/web-ui
+uvicorn codemaid_ui:app --reload --host 0.0.0.0 --port 3030
+```
+
+## Manual Commands
+
+```bash
+# Start from terminal
+codemaid list           # List available models
+codemaid audit <task>   # Audit a task
+codemaid execute <task> # Execute a task
+codemaid status         # Check status
+```
+
+## Environment Variables
+
+```bash
+export OLLAMA_BASE_URL="http://localhost:11434"
+export MODEL="codellama:7b-codebase"
+```
+
+## File Structure
+
+```
+/home/cuckaoccurs/Projects/apps/CodeMAID/
+├── codemaid/
+│   ├── __init__.py
+│   └── main.py          # Entry point for CLI
+├── bridge.py            # WebUI integration
+├── pyproject.toml      # Package config
+├── INSTALL.md          # Installation guide (see above)
+└── README.md           # This file
+```
+
+## Testing
+
+```bash
+# Test the engine
+python3 -m codemaid --help
+
+# Test audit
+python3 -m codemaid audit test-task
+```
+
+## Troubleshooting
+
+### termios Error
+```
+termios.error: Inappropriate ioctl for device
+```
+**Solution:** Run from an actual terminal session.
+
+### Import Issues
+```bash
+# Add to your Python environment
+sys.path.insert(0, '/home/cuckaoccurs/Projects/apps/CodeMAID')
+```
+
+### Ollama Not Running
+```bash
+# Start Ollama
+ollama serve
+```
+
+## Support
+
+- Repository: `/home/cuckaoccurs/Projects/apps/CodeMAID`
+- Documentation: Check INSTALL.md

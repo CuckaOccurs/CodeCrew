@@ -639,11 +639,32 @@ class OpenWebUIProvider(OpenAIProvider):
         return super().chat_stream(messages, tools, on_chunk)
 
 
+class RemoteProvider(BaseProvider):
+    """Provider that talks to a remote CodeMAID Bridge."""
+    def __init__(self, model: str, host: str, **kwargs: Any) -> None:
+        super().__init__(model)
+        self.host = host.rstrip("/")
+
+    def chat(self, messages: list[dict[str, Any]], tools: list[dict] | None = None) -> dict[str, Any]:
+        try:
+            resp = requests.post(
+                f"{self.host}/chat",
+                json={"text": messages[-1]["content"], "model": self.model},
+                timeout=300
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return {"role": "assistant", "content": data.get("response", "")}
+        except Exception as e:
+            return {"role": "assistant", "content": f"Remote Error: {e}"}
+
 def get_provider(name: str, model: str, **kwargs: Any) -> BaseProvider:
     """Factory function to get the correct provider instance."""
     name = name.lower()
     if name == "ollama":
         return OllamaProvider(model, **kwargs)
+    elif name == "remote":
+        return RemoteProvider(model, host=kwargs.get("host"), **kwargs)
     elif name == "openai":
         return OpenAIProvider(model, api_key=kwargs.get("api_key") or os.environ.get("OPENAI_API_KEY"))
     elif name == "anthropic":
