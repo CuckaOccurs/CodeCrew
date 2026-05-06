@@ -133,7 +133,6 @@ def draw_status():
     quickhelp = DGREY + "  " + "  ".join("/" + p for p in personas) + "  /help  /clear  /reset" + R
 
     with term.location():
-        sys.stdout.write(term.hide_cursor)
         # Status line (row h-2, 0-indexed)
         sys.stdout.write(term.move_yx(h - 2, 0) + term.clear_eol)
         sys.stdout.write(DGREY + left + " "*lpad + vc + mid + DGREY + " "*rpad + GREY + s.model + "  \u00b7  " + CYAN + BOLD + s.persona_id + R)
@@ -318,7 +317,8 @@ async def stream(prompt):
 # ─── Input ────────────────────────────────────────────────────────────────────
 
 def read_line():
-    sys.stdout.write(DGREY + "  > " + R)
+    # Force cursor to the last line of the scroll region
+    sys.stdout.write(term.move_yx(term.height - 3, 0) + DGREY + "  > " + R)
     sys.stdout.flush()
     buf = []
 
