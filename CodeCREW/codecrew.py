@@ -109,15 +109,21 @@ def H():
 
 def setup_terminal():
     sys.stdout.write(term.enter_fullscreen)
-    sys.stdout.write(term.csr(1, term.height - 2))
+    # 0-indexed: rows 0 to h-3 are the scroll region.
+    # Rows h-2 and h-1 are protected for the status bar.
+    sys.stdout.write(term.csr(0, term.height - 3))
     sys.stdout.write(term.move_yx(0, 0))
     sys.stdout.flush()
 
 def cleanup_terminal():
-    sys.stdout.write(term.csr(1, term.height))
+    # Reset scroll region to the full screen
+    sys.stdout.write(term.csr(0, term.height - 1))
     sys.stdout.write(term.exit_fullscreen)
     sys.stdout.write(term.normal_cursor)
     sys.stdout.flush()
+    # Fallback to system reset if terminal state is corrupted
+    import os
+    os.system("stty sane")
 
 def draw_status():
     h = term.height
@@ -255,7 +261,7 @@ async def stream(prompt):
     s.streaming   = True
     s.interrupted = False
 
-    t = threading.Thread(target=hint_scroller, daemon=True)
+    t = threading.Thread(target=hint_scroller, name="HintScroller", daemon=True)
     t.start()
 
     msgs = []
@@ -290,7 +296,8 @@ async def stream(prompt):
                             t.join(timeout=0.5)
                             ts   = datetime.now().strftime("%H:%M")
                             name = s.persona_data.get("name", s.persona_id)
-                            sys.stdout.write(f"\n{DGREY}  {ts}  {CYAN}{BOLD}{name}{R}  ")
+                            # Ensure we start on a clean line within the scroll region
+                            sys.stdout.write(f"{DGREY}  {ts}  {CYAN}{BOLD}{name}{R}  ")
                             sys.stdout.flush()
                             first = False
                         resp_text += chunk
@@ -380,7 +387,7 @@ def handle_cmd(text):
         return True
     if cmd in ("safe", "cage", "free"):
         s.vault = cmd
-        print(DIM + f"  vault: {cmd}" + R)
+        sys.stdout.write(DIM + f"  vault: {cmd}\n" + R)
         draw_status()
         return True
     if cmd == "clear":
@@ -391,15 +398,15 @@ def handle_cmd(text):
     if cmd == "reset":
         s.history = []
         s.turn_count = 0
-        print(DIM + "  context cleared" + R)
+        sys.stdout.write(DIM + "  context cleared\n" + R)
         return True
     if cmd == "help":
-        print(DIM + "  personas : " + "  ".join(f"/{p}" for p in personas) + R)
-        print(DIM + "  vault    : /safe  /cage  /free" + R)
-        print(DIM + "  context  : /clear  /reset" + R)
-        print(DIM + "  files    : /read <path>" + R)
-        print(DIM + "  clip     : /copy [text]  /paste" + R)
-        print(DIM + "  keys     : esc interrupt   ctrl+c exit" + R)
+        sys.stdout.write(DIM + "  personas : " + "  ".join(f"/{p}" for p in personas) + "\n" + R)
+        sys.stdout.write(DIM + "  vault    : /safe  /cage  /free\n" + R)
+        sys.stdout.write(DIM + "  context  : /clear  /reset\n" + R)
+        sys.stdout.write(DIM + "  files    : /read <path>\n" + R)
+        sys.stdout.write(DIM + "  clip     : /copy [text]  /paste\n" + R)
+        sys.stdout.write(DIM + "  keys     : esc interrupt   ctrl+c exit\n" + R)
         return True
     if cmd == "copy":
         import subprocess
@@ -510,13 +517,26 @@ async def main():
             continue
 
         ts = datetime.now().strftime("%H:%M")
-        print(f"\n{DGREY}  {ts}  {GREY}{text}{R}")
+        sys.stdout.write(f"\n{DGREY}  {ts}  {GREY}{text}{R}\n")
+        sys.stdout.flush()
         await stream(text)
 
-if __name__ == "__main__":
+import os
+import sys
+
+def run_terminal():
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        pass
+        cleanup_terminal()
+        os._exit(0)
+    except Exception as e:
+        cleanup_terminal()
+        print(f"\nError: {e}")
+        os._exit(1)
     finally:
         cleanup_terminal()
+        os._exit(0)
+
+if __name__ == "__main__":
+    run_terminal()
