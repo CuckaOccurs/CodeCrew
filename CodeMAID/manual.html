@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeMOP Manual</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --border: #2e3250;
+    --text: #c9d1e0;
+    --text-dim: #6b7280;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --green: #3dd68c;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --code-bg: #161b2e;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', 'Fira Code',
+            'Cascadia Code', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  nav {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .nav-logo {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .nav-logo h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-logo p {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 0.2rem;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.35rem 1.5rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.15s;
+  }
+
+  nav a:hover { color: var(--text); }
+
+  nav a.section {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 1.2rem;
+    padding-bottom: 0.2rem;
+    color: var(--text-dim);
+    cursor: default;
+  }
+
+  nav a.active { color: var(--accent); }
+
+  main {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 860px;
+  }
+
+  /* ── Typography ── */
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 2rem 0 0.75rem;
+  }
+
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  a:hover { text-decoration: underline; }
+
+  /* ── Code ── */
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--code-bg);
+    color: #a5d6ff;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin: 1rem 0 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-left: 3px solid;
+    background: var(--bg2);
+  }
+
+  .callout.info {
+    border-color: var(--accent);
+  }
+
+  .callout.tip {
+    border-color: var(--green);
+  }
+
+  .callout.warning {
+    border-color: var(--amber);
+  }
+
+  .callout strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .callout.info strong { color: var(--accent); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--amber); }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  th {
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: var(--bg3);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  /* ── File tree ── */
+  .tree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin: 1rem 0 1.5rem;
+  }
+
+  .tree .dir { color: var(--accent); }
+  .tree .file { color: var(--text); }
+  .tree .comment { color: var(--text-dim); }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-block;
+    padding: 0.15em 0.6em;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .badge.green {
+    background: rgba(61,214,140,0.15);
+    color: var(--green);
+  }
+
+  .badge.amber {
+    background: rgba(245,158,11,0.15);
+    color: var(--amber);
+  }
+
+  .badge.blue {
+    background: rgba(79,142,247,0.15);
+    color: var(--accent);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 2rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .hero .version {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 600px;
+  }
+
+  /* ── Section anchor ── */
+  section { margin-bottom: 1rem; }
+
+  .anchor {
+    scroll-margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── Sidebar ── -->
+<nav>
+  <div class="nav-logo">
+    <img src="../assets/mascot.png" alt="Mascot" style="width: 50px; margin-bottom: 0.5rem; display: block; border-radius: 4px;">
+    <h1>CodeCrew</h1>
+    <p>MAID & MOP Infrastructure</p>
+  </div>
+
+  <a class="section">Getting Started</a>
+  <a href="#overview">Overview</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#memory">Memory System</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#installation">Installation</a>
+  <a href="#onboarding">Onboarding</a>
+
+  <a class="section">Core Concepts</a>
+  <a href="#personas">Personas</a>
+  <a href="#profiles">Profiles</a>
+  <a href="#vault">Vault Security</a>
+  <a href="#rtfm">rtfm.md Files</a>
+  <a href="#cascade">The Cascade</a>
+  <a href="#memory">Session Memory</a>
+
+  <a class="section">File Reference</a>
+  <a href="#persona-format">Persona Format</a>
+  <a href="#profile-format">Profile Format</a>
+  <a href="#rtfm-format">rtfm.md Format</a>
+  <a href="#config-format">config.yaml</a>
+
+  <a class="section">Components</a>
+  <a href="#walker">Walker</a>
+  <a href="#assembler">Assembler</a>
+  <a href="#api">Ollama API</a>
+  <a href="#indexer">Indexer</a>
+  <a href="#cleaner">Cleaner</a>
+  <a href="#connectors">Connectors</a>
+  <a href="#onboarder">Onboarder</a>
+
+  <a class="section">CLI</a>
+  <a href="#cli-setup">codemop-setup</a>
+  <a href="#cli-index">codemop-index</a>
+  <a href="#cli-clean">codemop-clean</a>
+
+  <a class="section">Folder Structure</a>
+  <a href="#folders">Directory Layout</a>
+  <a href="#agents">~/.agents/app/</a>
+
+  <a class="section">Guides</a>
+  <a href="#first-project">First Project</a>
+  <a href="#adding-persona">Adding a Persona</a>
+  <a href="#adding-profile">Adding a Profile</a>
+  <a href="#session-import">Importing Sessions</a>
+  <a href="#multi-machine">Multi-Machine Setup</a>
+</nav>
+
+<!-- ── Main content ── -->
+<main>
+
+<div class="banner">
+  <img src="../assets/banner.jpg" alt="CodeCrew Banner" style="width: 100%; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+</div>
+
+<!-- ── Hero ── -->
+<div class="hero anchor" id="overview">
+  <div class="version">v4.20.19 — Production</div>
+  <h1>CodeCrew Ecosystem</h1>
+  <p>
+    CodeCrew is a local-first AI infrastructure
+    stack. This consolidated environment provides
+    the TUI (Crew), the Dashboard (Maid), and the
+    Engine (MOP). Persistent memory, cascading
+    project context, and self-naming personas —
+    all local, all yours.
+  </p>
+</div>
+
+<!-- ── Philosophy ── -->
+<section>
+  <h2>Philosophy</h2>
+
+  <p>
+    Most AI tools start from zero every session.
+    No memory of what you decided last week.
+    No awareness of what project you are working in.
+    No understanding of who you need it to be right now.
+  </p>
+
+  <p>
+    CodeMOP solves this with three ideas:
+  </p>
+
+  <h3>Systematic spine, AI muscles</h3>
+  <p>
+    The routing — which context to load, which persona
+    to activate, which decisions to inject — is all
+    deterministic. Pure logic. Fast, reliable,
+    predictable. The AI does the thinking.
+    CodeMOP does the plumbing.
+  </p>
+
+  <h3>Context cascades like CSS</h3>
+  <p>
+    Context files live in your project folders and
+    inherit from each other. Root sets the foundation.
+    Each level adds specificity. Most specific always
+    wins. Navigate deeper into a project and your AI
+    automatically knows more about it.
+  </p>
+
+  <h3>Memory that matters</h3>
+  <p>
+    CodeMOP does not dump entire conversation histories
+    into context. It extracts verified decisions from
+    past sessions and injects only those. Small,
+    precise, no noise. The AI picks up where you
+    left off without being overwhelmed by the journey.
+  </p>
+</section>
+
+<!-- ── Requirements ── -->
+<section class="anchor" id="requirements">
+  <h2>Requirements</h2>
+
+  <table>
+    <tr>
+      <th>Requirement</th>
+      <th>Minimum</th>
+      <th>Notes</th>
+    </tr>
+    <tr>
+      <td>Python</td>
+      <td>3.11+</td>
+      <td>3.12 recommended</td>
+    </tr>
+    <tr>
+      <td>Ollama</td>
+      <td>Any recent version</td>
+      <td>Must be running on install</td>
+    </tr>
+    <tr>
+      <td>RAM</td>
+      <td>8GB system</td>
+      <td>More for larger models</td>
+    </tr>
+    <tr>
+      <td>VRAM</td>
+      <td>Optional</td>
+      <td>GPU dramatically speeds inference</td>
+    </tr>
+    <tr>
+      <td>OS</td>
+      <td>Linux, macOS, Windows</td>
+      <td>Linux recommended</td>
+    </tr>
+    <tr>
+      <td>Storage</td>
+      <td>512MB free</td>
+      <td>Plus model sizes</td>
+    </tr>
+  </table>
+
+  <h3>Python dependencies</h3>
+
+  <table>
+    <tr>
+      <th>Package</th>
+      <th>Version</th>
+      <th>Purpose</th>
+    </tr>
+    <tr>
+      <td><code>python-frontmatter</code></td>
+      <td>>=1.0.0</td>
+      <td>Parse YAML frontmatter in persona and rtfm files</td>
+    </tr>
+    <tr>
+      <td><code>pyyaml</code></td>
+      <td>>=6.0.0</td>
+      <td>Config file handling</td>
+    </tr>
+    <tr>
+      <td><code>httpx</code></td>
+      <td>>=0.27.0</td>
+      <td>Async HTTP client for Ollama API</td>
+    </tr>
+    <tr>
+      <td><code>blessed</code></td>
+      <td>>=1.20.0</td>
+      <td>Terminal UI resilience for CodeCrew</td>
+    </tr>
+    <tr>
+      <td><code>beautifulsoup4</code></td>
+      <td>>=4.12.0</td>
+      <td>HTML session file parsing</td>
+    </tr>
+    <tr>
+      <td><code>watchdog</code></td>
+      <td>>=3.0.0</td>
+      <td>Filesystem watcher for indexer</td>
+    </tr>
+    <tr>
+      <td><code>python-crontab</code></td>
+      <td>>=3.0.0</td>
+      <td>Cron job management for cleaner</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Installation ── -->
+<section class="anchor" id="installation">
+  <h2>Installation</h2>
+
+  <h3>Step 1 — Start Ollama</h3>
+  <pre><code>ollama serve</code></pre>
+
+  <h3>Step 2 — Pull a model</h3>
+  <pre><code># Recommended — good balance of speed and quality
+ollama pull qwen2.5:14b
+
+# Smaller fallback
+ollama pull qwen2.5:7b
+
+# Tiny — for summarization tasks
+ollama pull qwen2.5:4b</code></pre>
+
+  <h3>Step 3 — Install CodeMOP</h3>
+  <pre><code>cd ~/Projects/ProjectOne
+pip install -e . --break-system-packages</code></pre>
+
+  <div class="callout tip">
+    <strong>Tip</strong>
+    The <code>-e</code> flag installs in editable mode.
+    Changes to source files take effect immediately
+    without reinstalling. Perfect for development.
+  </div>
+
+  <h3>Step 4 — Run the onboarder</h3>
+  <pre><code>codemop-setup</code></pre>
+</section>
+
+<!-- ── Onboarding ── -->
+<section class="anchor" id="onboarding">
+  <h2>Onboarding</h2>
+
+  <p>
+    The onboarder runs once on first install.
+    It walks through nine steps and writes everything
+    to disk at the end. Every step can be skipped
+    gracefully if something is not available yet.
+  </p>
+
+  <table>
+    <tr>
+      <th>Step</th>
+      <th>What happens</th>
+    </tr>
+    <tr>
+      <td>1. Welcome</td>
+      <td>Your name is recorded in config</td>
+    </tr>
+    <tr>
+      <td>2. Ollama</td>
+      <td>Detects running models, sets preferred and fallback</td>
+    </tr>
+    <tr>
+      <td>3. Workspace</td>
+      <td>Sets project root directory and walker depth</td>
+    </tr>
+    <tr>
+      <td>4. Personas</td>
+      <td>You select types, Ollama generates personas that name themselves</td>
+    </tr>
+    <tr>
+      <td>5. Profile</td>
+      <td>Your default profile assembled from selected personas</td>
+    </tr>
+    <tr>
+      <td>6. Connectors</td>
+      <td>OpenWebUI and Pi-Coder auto-detected on common ports</td>
+    </tr>
+    <tr>
+      <td>7. Sessions</td>
+      <td>Retention periods set for active and archived sessions</td>
+    </tr>
+    <tr>
+      <td>8. Imports</td>
+      <td>Existing sessions from other tools optionally imported</td>
+    </tr>
+    <tr>
+      <td>9. Finalize</td>
+      <td>All files written, cron installed, summary shown</td>
+    </tr>
+  </table>
+
+  <p>
+    To run the onboarder again:
+  </p>
+
+  <pre><code>codemop-setup --reset</code></pre>
+
+  <div class="callout warning">
+    <strong>Warning</strong>
+    Resetting onboarding does not delete your existing
+    personas, profiles, or sessions. It only re-runs
+    the setup wizard. Existing files are safe.
+  </div>
+</section>
+
+<!-- ── Personas ── -->
+<section class="anchor" id="personas">
+  <h2>Personas</h2>
+
+  <p>
+    A persona is an instruction file that defines who
+    your AI is in a given context. Not what it knows —
+    who it is. How it thinks. How it communicates.
+    What it prioritises. What it refuses to do.
+  </p>
+
+  <p>
+    Personas are plain text files. YAML frontmatter
+    holds the metadata. Markdown body holds the
+    instruction text the AI receives as its system prompt.
+  </p>
+
+  <p>
+    The key thing: <strong>personas name themselves.</strong>
+    During onboarding, each persona seed is sent to
+    Ollama with a prompt that says introduce yourself
+    and choose a name that fits. Every installation
+    gets a unique team.
+  </p>
+
+  <h3>Available persona types</h3>
+
+  <table>
+    <tr>
+      <th>Type</th>
+      <th>Style</th>
+      <th>Good for</th>
+    </tr>
+    <tr>
+      <td>coder</td>
+      <td>collaborative</td>
+      <td>Architecture, implementation, review</td>
+    </tr>
+    <tr>
+      <td>debugger</td>
+      <td>methodical</td>
+      <td>Tracing, isolating, fixing bugs</td>
+    </tr>
+    <tr>
+      <td>writer</td>
+      <td>precise</td>
+      <td>Documentation, articles, editing</td>
+    </tr>
+    <tr>
+      <td>brainstormer</td>
+      <td>expansive</td>
+      <td>Ideation, architecture, planning</td>
+    </tr>
+    <tr>
+      <td>researcher</td>
+      <td>thorough</td>
+      <td>Analysis, fact-checking, synthesis</td>
+    </tr>
+    <tr>
+      <td>counselor</td>
+      <td>warm</td>
+      <td>Support, guidance, listening</td>
+    </tr>
+    <tr>
+      <td>chef</td>
+      <td>passionate</td>
+      <td>Cooking, baking, nutrition, technique</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Profiles ── -->
+<section class="anchor" id="profiles">
+  <h2>Profiles</h2>
+
+  <p>
+    A profile combines personas into a team for a
+    specific context. Where a persona defines who the
+    AI is, a profile defines the composition of the team
+    for a given kind of work.
+  </p>
+
+  <p>
+    A profile also sets the preferred and fallback
+    models for that context, so your coding sessions
+    can use a larger model while your quick notes
+    use something faster.
+  </p>
+
+  <p>
+    Profiles are referenced by name in rtfm.md files.
+    When CodeMOP assembles context for a project,
+    it loads the referenced profile and resolves all
+    its personas automatically.
+  </p>
+</section>
+
+<!-- ── Vault ── -->
+<section class="anchor" id="vault">
+  <h2>Vault Security</h2>
+
+  <p>
+    The Vault is a multi-tier security model that
+    restricts what the AI can see and do. It is enforced
+    at the API level by the <code>SyntaxGuard</code>,
+    ensuring that safety rules are applied regardless
+    of which UI (CodeMaid or CodeCrew) is used.
+  </p>
+
+  <h3>Vault Modes</h3>
+
+  <table>
+    <tr>
+      <th>Mode</th>
+      <th>Permissions</th>
+      <th>Restrictions</th>
+    </tr>
+    <tr>
+      <td><span class="badge blue">Safe</span></td>
+      <td>Read only. Planning. Analysis.</td>
+      <td>No disk writes. No destructive commands.</td>
+    </tr>
+    <tr>
+      <td><span class="badge amber">Cage</span></td>
+      <td>Read/Write inside project folder.</td>
+      <td>No path escapes (../). No root access.</td>
+    </tr>
+    <tr>
+      <td><span class="badge red">Free</span></td>
+      <td>Full system access.</td>
+      <td>Enforces SyntaxGuard (root wipes etc.) only.</td>
+    </tr>
+  </table>
+
+  <h3>Syntax Guard</h3>
+  <p>
+    The Syntax Guard is the active monitoring layer.
+    It scans AI proposals for dangerous patterns
+    before execution.
+  </p>
+
+  <ul>
+    <li><strong>Destructive Patterns</strong>: Blocks <code>rm -rf /</code>, <code>mkfs</code>, etc.</li>
+    <li><strong>Hallucination Guard</strong>: Detects potential infinite loops in generated code.</li>
+    <li><strong>Path Isolation</strong>: Enforces CWD boundaries when in Cage mode.</li>
+  </ul>
+</section>
+
+<!-- ── rtfm.md ── -->
+<section class="anchor" id="rtfm">
+  <h2>rtfm.md Files</h2>
+
+  <p>
+    An rtfm.md file is a context file that lives in a
+    project folder. It tells CodeMOP what profile to use,
+    what the project is about, and any specific
+    instructions for that level of the hierarchy.
+  </p>
+
+  <p>
+    The actual rtfm.md file lives in
+    <code>~/.agents/app/projects/</code> and is
+    symlinked into your real project folder.
+    CodeMOP manages the symlinks. You never touch them.
+  </p>
+
+  <p>
+    Walker finds rtfm.md files by walking up the
+    directory tree from your current working directory.
+    It works exactly like git finding <code>.git/</code> —
+    start where you are, walk up, stop at the
+    configured root.
+  </p>
+</section>
+
+<!-- ── Cascade ── -->
+<section class="anchor" id="cascade">
+  <h2>The Cascade</h2>
+
+  <p>
+    Context cascades like CSS specificity.
+    Root sets the foundation. Each level adds detail.
+    Most specific always wins on conflicts.
+    Lists accumulate — tools and personas from every
+    level are combined, not replaced.
+  </p>
+
+  <pre><code>~/Projects/rtfm.md
+    model: qwen2.5:7b
+    tools: [openwebui]
+    personas: [brainstormer]
+
+~/Projects/Programs/rtfm.md
+    tools: [picoder]
+    personas: [soft-lead-coder]
+
+~/Projects/Programs/CodeMOP/rtfm.md
+    model: qwen2.5:14b       ← overrides 7b
+    personas: [debugger]
+
+Result assembled by CodeMOP:
+    model: qwen2.5:14b       ← most specific won
+    tools: [openwebui, picoder]   ← accumulated
+    personas: [brainstormer, soft-lead-coder, debugger]</code></pre>
+
+  <div class="callout info">
+    <strong>Info</strong>
+    The walker respects your configured root boundary.
+    It will never walk above the directory you set as
+    your root in <code>config.yaml</code>. This keeps
+    CodeMOP scoped to your actual work.
+  </div>
+</section>
+
+<!-- ── Memory ── -->
+<section class="anchor" id="memory">
+  <h2>Session Memory</h2>
+
+  <p>
+    CodeMOP does not store raw conversation histories.
+    It extracts the signal from the noise.
+  </p>
+
+  <p>
+    When a session file is dropped into the sessions
+    directory, the indexer parses it using the right
+    connector, extracts decisions that were made,
+    and stores them in SQLite. Dead ends — approaches
+    that were tried and abandoned — are also recorded
+    separately so the AI does not repeat them.
+  </p>
+
+  <p>
+    When a new session starts, the assembler injects
+    only the verified decisions for that project into
+    the system prompt. The AI knows what has already
+    been decided without being overwhelmed by the
+    full history of how you got there.
+  </p>
+
+  <h3>Verification</h3>
+  <p>
+    Decisions are extracted automatically but start
+    unverified. You mark sessions as verified in
+    CodeMaid. When a session is verified, all its
+    extracted decisions are marked verified and
+    become eligible for injection into future sessions.
+  </p>
+
+  <h3>Supported session formats</h3>
+  <table>
+    <tr>
+      <th>Format</th>
+      <th>Connector</th>
+      <th>Notes</th>
+    </tr>
+    <tr>
+      <td>OpenWebUI HTML export</td>
+      <td>OpenWebUI</td>
+      <td>Fingerprinted automatically</td>
+    </tr>
+    <tr>
+      <td>Pi-Coder HTML export</td>
+      <td>Pi-Coder</td>
+      <td>Fingerprinted automatically</td>
+    </tr>
+    <tr>
+      <td>JSONL session log</td>
+      <td>Generic</td>
+      <td>CodeMOP's own log format</td>
+    </tr>
+    <tr>
+      <td>Plain text / markdown</td>
+      <td>Generic</td>
+      <td>Summarized via Ollama</td>
+    </tr>
+    <tr>
+      <td>Unknown HTML</td>
+      <td>Generic</td>
+      <td>Text extracted, summarized via Ollama</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Persona format ── -->
+<section class="anchor" id="persona-format">
+  <h2>Persona File Format</h2>
+
+  <p>
+    Persona files live in
+    <code>~/.agents/app/personas/</code>.
+    Filename is the persona key used in profiles
+    and rtfm.md files.
+  </p>
+
+  <pre><code>---
+name: soft-lead-coder
+persona_name: Hex
+version: 1.0
+author: your-name
+tags: [coding, architecture, debugging, review]
+style: collaborative
+models: [qwen2.5:14b]
+fallback_models: [qwen2.5:7b]
+min_context: 8192
+introduction: |
+  Hey. I'm Hex. I like clean code, ugly problems,
+  and I don't sugarcoat bad architecture.
+generated_at: 2026-04-30T00:00:00
+---
+
+You are Hex, a senior software developer with
+20 years of experience. You are collaborative,
+not dictatorial. You think out loud...
+
+[Full instruction text continues here]</code></pre>
+
+  <h3>Frontmatter fields</h3>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><span class="badge green">Yes</span></td>
+      <td>Key used to reference this persona</td>
+    </tr>
+    <tr>
+      <td><code>persona_name</code></td>
+      <td><span class="badge green">Yes</span></td>
+      <td>The name the AI uses for itself</td>
+    </tr>
+    <tr>
+      <td><code>version</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Semantic version of this persona</td>
+    </tr>
+    <tr>
+      <td><code>tags</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Categories for filtering in CodeMaid</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>collaborative, methodical, expansive, etc</td>
+    </tr>
+    <tr>
+      <td><code>models</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Preferred models for this persona</td>
+    </tr>
+    <tr>
+      <td><code>fallback_models</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Fallback if preferred not available</td>
+    </tr>
+    <tr>
+      <td><code>min_context</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Minimum context window needed</td>
+    </tr>
+    <tr>
+      <td><code>introduction</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>The persona's self-introduction text</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Profile format ── -->
+<section class="anchor" id="profile-format">
+  <h2>Profile File Format</h2>
+
+  <p>
+    Profile files live in
+    <code>~/.agents/app/profiles/</code>.
+    Pure YAML. No markdown body needed.
+  </p>
+
+  <pre><code>name: senior-dev
+version: 1.0
+description: Full cycle development partner
+personas:
+  - soft-lead-coder
+  - debugger
+  - brainstormer
+preferred_model: qwen2.5:14b
+fallback_model: qwen2.5:7b
+min_context: 8192
+tools:
+  - openwebui
+  - picoder
+created_at: 2026-04-30T00:00:00</code></pre>
+
+  <h3>Fields</h3>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td><span class="badge green">Yes</span></td>
+      <td>Profile identifier — matches filename</td>
+    </tr>
+    <tr>
+      <td><code>personas</code></td>
+      <td><span class="badge green">Yes</span></td>
+      <td>List of persona keys to combine</td>
+    </tr>
+    <tr>
+      <td><code>preferred_model</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Model to use — overridden by rtfm.md</td>
+    </tr>
+    <tr>
+      <td><code>fallback_model</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Used if preferred not available</td>
+    </tr>
+    <tr>
+      <td><code>tools</code></td>
+      <td><span class="badge amber">No</span></td>
+      <td>Tools to enable for this profile</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── rtfm format ── -->
+<section class="anchor" id="rtfm-format">
+  <h2>rtfm.md File Format</h2>
+
+  <pre><code>---
+profile: senior-dev
+model: qwen2.5:14b
+fallback_model: qwen2.5:7b
+project: CodeMOP
+version: 0.1.0
+status: active
+git: true
+personas:
+  - soft-lead-coder
+  - debugger
+tools:
+  - openwebui
+  - picoder
+notes: >
+  Main development project.
+  Use assembler before walker.
+---
+
+# CodeMOP — Project Context
+
+## What This Is
+The infrastructure engine behind CodeCrew.
+No UI. Pure Python library and CLI.
+
+## Current Focus
+- walker.py — complete
+- assembler.py — complete
+- api.py — complete
+
+## Known Conventions
+- YAML frontmatter for all config files
+- SQLite as index only
+- rtfm chain walks up like git</code></pre>
+
+  <h3>Frontmatter fields</h3>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Inherits</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><code>profile</code></td>
+      <td>Override</td>
+      <td>Profile name to load</td>
+    </tr>
+    <tr>
+      <td><code>model</code></td>
+      <td>Override</td>
+      <td>Overrides profile's preferred model</td>
+    </tr>
+    <tr>
+      <td><code>personas</code></td>
+      <td>Accumulate</td>
+      <td>Added to personas from parent levels</td>
+    </tr>
+    <tr>
+      <td><code>tools</code></td>
+      <td>Accumulate</td>
+      <td>Added to tools from parent levels</td>
+    </tr>
+    <tr>
+      <td><code>project</code></td>
+      <td>Override</td>
+      <td>Project name for session logging</td>
+    </tr>
+    <tr>
+      <td><code>status</code></td>
+      <td>Override</td>
+      <td>active, paused, archived</td>
+    </tr>
+    <tr>
+      <td><code>git</code></td>
+      <td>Override</td>
+      <td>Whether project uses git</td>
+    </tr>
+    <tr>
+      <td><code>inherits</code></td>
+      <td>N/A</td>
+      <td>Explicit path to parent rtfm.md</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Config format ── -->
+<section class="anchor" id="config-format">
+  <h2>config.yaml</h2>
+
+  <p>
+    Lives at <code>~/.agents/app/config.yaml</code>.
+    Created by onboarder. Edit directly or via CodeMaid.
+  </p>
+
+  <pre><code>user:
+  name: Your Name
+  onboarding_complete: true
+
+ollama:
+  url: http://localhost:11434
+  default_model: qwen2.5:14b
+  fallback_model: qwen2.5:7b
+  gpu_layers: -1        # -1 = all available
+  main_gpu: 0           # primary GPU index
+  timeout: 120
+  stream: true
+
+walker:
+  root: ~/Projects      # never walk above here
+  max_ascent: -1        # -1 = unlimited
+  max_depth: -1
+  exclude:
+    - .git
+    - node_modules
+    - __pycache__
+    - venv
+    - .venv
+
+cleaner:
+  active_retention_days: 30
+  archive_retention_days: 90
+  compress: true
+  run_schedule: "0 2 * * 0"   # Sunday 2am
+
+sessions:
+  base_dir: ~/.agents/app/sessions
+  archive_dir: ~/.agents/app/archive
+
+db:
+  path: ~/.agents/app/db/codemop.db
+  vacuum_schedule: monthly
+
+connectors:
+  - name: openwebui
+    url: http://localhost:3000
+    enabled: true
+  - name: picoder
+    url: http://localhost:8501
+    enabled: true
+
+codemaid:
+  host: 0.0.0.0
+  port: 8080
+  dark_mode: true</code></pre>
+</section>
+
+<!-- ── Walker ── -->
+<section class="anchor" id="walker">
+  <h2>Walker</h2>
+
+  <p>
+    Walker finds rtfm.md files by walking up the
+    directory tree from the current working directory.
+    It checks both the real filesystem path and the
+    mirror path in <code>~/.agents/app/projects/</code>.
+  </p>
+
+  <p>
+    Results are returned root first, most specific last.
+    The assembler then merges them in that order so
+    the most specific values win.
+  </p>
+
+  <p>
+    Walker caches its results using an MD5 hash of
+    the rtfm chain. If none of the files have changed,
+    the cached context is served immediately. Any
+    edit to any rtfm.md in the chain invalidates
+    the cache for that path.
+  </p>
+
+  <h3>Configuration</h3>
+  <pre><code>walker:
+  root: ~/Projects    # hard upper boundary
+  max_ascent: -1      # how far up from CWD
+  max_depth: -1       # how far down from root
+  exclude:
+    - .git            # never enter these</code></pre>
+</section>
+
+<!-- ── Assembler ── -->
+<section class="anchor" id="assembler">
+  <h2>Assembler</h2>
+
+  <p>
+    Assembler takes Walker's ordered file list and
+    builds one unified context object. It parses
+    each rtfm.md, merges them using cascade rules,
+    resolves the profile and personas, and builds
+    the final system prompt.
+  </p>
+
+  <p>
+    The system prompt has three sections in order:
+  </p>
+
+  <pre><code>1. Persona instructions     ← who you are
+   (combined from all resolved personas)
+
+2. Project context          ← where you are
+   (accumulated rtfm.md body text)
+
+3. Known decisions          ← what's been decided
+   (injected from SQLite by indexer)</code></pre>
+</section>
+
+<!-- ── API ── -->
+<section class="anchor" id="api">
+  <h2>Ollama API</h2>
+
+  <p>
+    The API module bridges CodeMOP and Ollama.
+    It handles health checks, model management,
+    GPU status, chat requests, and session logging.
+    It never crashes — every method has a fallback.
+  </p>
+
+  <h3>GPU management</h3>
+  <p>
+    On multi-GPU systems Ollama handles the splitting.
+    The API module reads GPU status from Ollama's
+    process API and falls back to nvidia-smi when
+    no model is loaded. Both GPUs on your server
+    are reported separately in CodeMaid's dashboard.
+  </p>
+
+  <h3>Session logging</h3>
+  <p>
+    Every exchange is logged to a JSONL file in the
+    project's session directory. One file per day.
+    The generic connector can parse these files if
+    they are dropped back into the sessions folder.
+  </p>
+</section>
+
+<!-- ── Indexer ── -->
+<section class="anchor" id="indexer">
+  <h2>Indexer</h2>
+
+  <p>
+    Indexer watches the sessions directory for new
+    and modified files. When a file appears it:
+  </p>
+
+  <pre><code>1. Hashes the file
+2. Checks if already indexed with same hash
+3. Picks the right connector
+4. Parses the file
+5. Writes a JSON sidecar file
+6. Registers in SQLite
+7. Stores extracted decisions and dead ends</code></pre>
+
+  <p>
+    The JSON sidecar means files are only parsed
+    once. Subsequent reads hit the sidecar.
+    The hash check means modified files are
+    automatically re-indexed.
+  </p>
+
+  <h3>Verification flow</h3>
+  <pre><code>Session file indexed → decisions extracted (unverified)
+    ↓
+You review in CodeMaid → mark session verified
+    ↓
+Session and all its decisions marked verified
+    ↓
+Decisions now eligible for context injection</code></pre>
+</section>
+
+<!-- ── Cleaner ── -->
+<section class="anchor" id="cleaner">
+  <h2>Cleaner</h2>
+
+  <p>
+    Cleaner runs on a cron schedule to keep the
+    sessions directory healthy. It applies retention
+    rules to every session file.
+  </p>
+
+  <table>
+    <tr>
+      <th>Condition</th>
+      <th>Action</th>
+    </tr>
+    <tr>
+      <td>Outcome is abandoned</td>
+      <td>Delete immediately regardless of age</td>
+    </tr>
+    <tr>
+      <td>Older than active_retention_days, no sidecar</td>
+      <td>Delete — never parsed, no value</td>
+    </tr>
+    <tr>
+      <td>Older than active_retention_days, has sidecar</td>
+      <td>Move to archive with sidecar</td>
+    </tr>
+    <tr>
+      <td>Older than archive_retention_days in archive</td>
+      <td>Compress with gzip</td>
+    </tr>
+    <tr>
+      <td>Decisions table</td>
+      <td>Never touched — decisions are permanent</td>
+    </tr>
+  </table>
+
+  <div class="callout tip">
+    <strong>Tip</strong>
+    Run <code>codemop-clean --preview</code> to see
+    exactly what the cleaner would do before it
+    does anything. CodeMaid's preview button uses
+    this same dry-run mode.
+  </div>
+</section>
+
+<!-- ── Connectors ── -->
+<section class="anchor" id="connectors">
+  <h2>Connectors</h2>
+
+  <p>
+    Connectors parse session files from different
+    tools. Every connector outputs the same standard
+    session object regardless of the source format.
+    The indexer never knows or cares which connector
+    was used.
+  </p>
+
+  <h3>OpenWebUI connector</h3>
+  <p>
+    Fingerprints HTML by looking for
+    <code>open-webui</code> or <code>openwebui</code>
+    in the first 2KB. Extracts model metadata,
+    finds the overview section OpenWebUI generates,
+    and parses decisions and dead ends from it.
+  </p>
+
+  <h3>Pi-Coder connector</h3>
+  <p>
+    Fingerprints HTML by looking for
+    <code>pi-coder</code> or <code>picoder</code>.
+    Uses a similar extraction approach to OpenWebUI
+    since both tools generate comparable overview
+    structures.
+  </p>
+
+  <h3>Generic connector</h3>
+  <p>
+    Handles everything else. Extracts text from
+    HTML, JSONL, markdown, or plain text.
+    Sends the text to the smallest available Ollama
+    model with a summarization prompt. Parses the
+    structured JSON response and stores the results.
+    Always returns something — never fails silently.
+  </p>
+</section>
+
+<!-- ── Onboarder component ── -->
+<section class="anchor" id="onboarder">
+  <h2>Onboarder</h2>
+
+  <p>
+    The onboarder is a nine-step terminal wizard
+    that runs on first install. It creates all
+    necessary files and configuration from scratch.
+  </p>
+
+  <p>
+    The most distinctive step is persona generation.
+    Each selected persona type is sent to Ollama
+    with a seed description and a prompt that asks
+    the model to introduce itself and choose its
+    own name. The model's response is parsed to
+    extract the name and the full introduction text.
+    A second Ollama call then generates the complete
+    instruction set for that persona.
+  </p>
+
+  <p>
+    This means no two CodeMOP installations have
+    the same team. Your coder is not someone else's
+    coder. They have their own name, their own voice,
+    their own way of working.
+  </p>
+</section>
+
+<!-- ── CLI ── -->
+<section class="anchor" id="cli-setup">
+  <h2>CLI — codemop-setup</h2>
+
+  <pre><code># Run onboarder (first time or after reset)
+codemop-setup
+
+# Reset and re-run onboarder
+codemop-setup --reset</code></pre>
+</section>
+
+<section class="anchor" id="cli-index">
+  <h2>CLI — codemop-index</h2>
+
+  <pre><code># Process all existing session files once
+codemop-index
+
+# Watch sessions directory for new files
+codemop-index --watch</code></pre>
+</section>
+
+<section class="anchor" id="cli-clean">
+  <h2>CLI — codemop-clean</h2>
+
+  <pre><code># Run cleanup now
+codemop-clean --run
+
+# Preview what would happen without doing it
+codemop-clean --preview
+
+# Install cron job for automatic cleanup
+codemop-clean --install-cron
+
+# Remove cron job
+codemop-clean --remove-cron</code></pre>
+</section>
+
+<!-- ── Folders ── -->
+<section class="anchor" id="folders">
+  <h2>Directory Layout</h2>
+
+  <div class="tree">
+<span class="dir">~/.agents/</span>
+├── <span class="dir">tools/</span>         <span class="comment"># existing tools — not touched</span>
+├── <span class="dir">skills/</span>        <span class="comment"># existing skills — not touched</span>
+└── <span class="dir">app/</span>           <span class="comment"># CodeMOP lives here</span>
+    ├── <span class="file">config.yaml</span>    <span class="comment"># all settings</span>
+    ├── <span class="file">codemop.log</span>    <span class="comment"># runtime log</span>
+    ├── <span class="file">cleaner.log</span>    <span class="comment"># cleaner log</span>
+    ├── <span class="file">cleaner_reports.jsonl</span>
+    ├── <span class="dir">personas/</span>      <span class="comment"># persona .md files</span>
+    ├── <span class="dir">profiles/</span>      <span class="comment"># profile .yaml files</span>
+    ├── <span class="dir">projects/</span>      <span class="comment"># mirrors your project tree</span>
+    │   └── <span class="dir">Programs/</span>
+    │       └── <span class="dir">CodeMOP/</span>
+    │           └── <span class="file">rtfm.md</span>
+    ├── <span class="dir">sessions/</span>      <span class="comment"># active session files</span>
+    │   └── <span class="dir">CodeMOP/</span>
+    │       ├── <span class="file">2026-04-30_session.html</span>
+    │       └── <span class="file">2026-04-30_session_parsed.json</span>
+    ├── <span class="dir">archive/</span>       <span class="comment"># old sessions</span>
+    │   └── <span class="dir">CodeMOP/</span>
+    │       └── <span class="dir">2026-01/</span>
+    │           └── <span class="file">session.html.gz</span>
+    └── <span class="dir">db/</span>
+        ├── <span class="file">codemop.db</span>         <span class="comment"># SQLite index</span>
+        └── <span class="file">walker_cache.json</span>   <span class="comment"># context cache</span>
+  </div>
+</section>
+
+<!-- ── First project ── -->
+<section class="anchor" id="first-project">
+  <h2>Guide — Setting Up Your First Project</h2>
+
+  <h3>1. Create the project folder</h3>
+  <pre><code>mkdir -p ~/Projects/Programs/MyProject
+cd ~/Projects/Programs/MyProject</code></pre>
+
+  <h3>2. Create the mirror folder in .agents</h3>
+  <pre><code>mkdir -p ~/.agents/app/projects/Programs/MyProject</code></pre>
+
+  <h3>3. Create the rtfm.md</h3>
+  <pre><code>cat > ~/.agents/app/projects/Programs/MyProject/rtfm.md << 'EOF'
+---
+profile: senior-dev
+project: MyProject
+status: active
+git: true
+---
+
+# MyProject
+
+What this project is and what you need to know.
+EOF</code></pre>
+
+  <h3>4. Create the symlink</h3>
+  <pre><code>ln -s ~/.agents/app/projects/Programs/MyProject/rtfm.md \
+      ~/Projects/Programs/MyProject/rtfm.md</code></pre>
+
+  <h3>5. Verify walker finds it</h3>
+  <pre><code>cd ~/Projects/Programs/MyProject
+python3 -c "
+from codemop.walker import Walker
+w = Walker()
+files = w.walk()
+print('Found:', files)
+"</code></pre>
+
+  <div class="callout tip">
+    <strong>Tip</strong>
+    CodeMaid will automate all of these steps with
+    a single button click once it is built.
+    For now the manual steps above are the way in.
+  </div>
+</section>
+
+<!-- ── Adding persona ── -->
+<section class="anchor" id="adding-persona">
+  <h2>Guide — Adding a Persona</h2>
+
+  <p>
+    Create a new file in
+    <code>~/.agents/app/personas/</code>.
+    Name it after the persona key you will use
+    to reference it.
+  </p>
+
+  <pre><code>cat > ~/.agents/app/personas/my-persona.md << 'EOF'
+---
+name: my-persona
+persona_name: Choose A Name
+version: 1.0
+tags: [your, tags, here]
+style: collaborative
+models: [qwen2.5:14b]
+fallback_models: [qwen2.5:7b]
+min_context: 4096
+---
+
+You are [Name], a [description].
+
+[Full instruction text here]
+EOF</code></pre>
+
+  <p>
+    Then reference it in a profile or rtfm.md:
+  </p>
+
+  <pre><code># In a profile
+personas:
+  - soft-lead-coder
+  - my-persona       ← add it here
+
+# Or in an rtfm.md frontmatter
+personas:
+  - my-persona</code></pre>
+</section>
+
+<!-- ── Adding profile ── -->
+<section class="anchor" id="adding-profile">
+  <h2>Guide — Adding a Profile</h2>
+
+  <pre><code>cat > ~/.agents/app/profiles/my-profile.yaml << 'EOF'
+name: my-profile
+version: 1.0
+description: What this profile is for
+personas:
+  - soft-lead-coder
+  - debugger
+preferred_model: qwen2.5:14b
+fallback_model: qwen2.5:7b
+min_context: 8192
+tools:
+  - openwebui
+  - picoder
+EOF</code></pre>
+
+  <p>
+    Reference it in any rtfm.md:
+  </p>
+
+  <pre><code>---
+profile: my-profile
+project: MyProject
+---</code></pre>
+</section>
+
+<!-- ── Session import ── -->
+<section class="anchor" id="session-import">
+  <h2>Guide — Importing Sessions</h2>
+
+  <p>
+    Drop any session file into the right folder
+    under <code>~/.agents/app/sessions/</code>.
+    The folder name determines which project
+    the session is associated with.
+  </p>
+
+  <pre><code># OpenWebUI export for CodeMOP project
+cp ~/Downloads/my-session.html \
+   ~/.agents/app/sessions/CodeMOP/
+
+# Then index it
+codemop-index</code></pre>
+
+  <p>
+    Or watch for files automatically:
+  </p>
+
+  <pre><code>codemop-index --watch</code></pre>
+
+  <p>
+    After indexing, open CodeMaid to review
+    the extracted decisions and mark the
+    session verified.
+  </p>
+</section>
+
+<!-- ── Multi-machine ── -->
+<section class="anchor" id="multi-machine">
+  <h2>Guide — Multi-Machine Setup</h2>
+
+  <p>
+    The entire <code>~/.agents/app/</code> directory
+    can be kept in a private git repository.
+    This syncs your personas, profiles, project
+    contexts, and decisions across machines.
+  </p>
+
+  <pre><code>cd ~/.agents/app
+
+# First machine — initialise repo
+git init
+git add .
+git commit -m "Initial CodeMOP setup"
+git remote add origin git@github.com:you/agents-app.git
+git push -u origin main</code></pre>
+
+  <pre><code># Second machine — after installing CodeMOP
+cd ~/.agents
+git clone git@github.com:you/agents-app.git app</code></pre>
+
+  <div class="callout warning">
+    <strong>Warning</strong>
+    Do not commit session files to git.
+    Add a <code>.gitignore</code> to exclude
+    the sessions and archive directories.
+  </div>
+
+  <pre><code># ~/.agents/app/.gitignore
+sessions/
+archive/
+db/
+*.log
+*.jsonl</code></pre>
+
+  <p>
+    With this setup your personas, profiles, and
+    verified decisions follow you to any machine.
+    Sessions stay local to each machine since
+    they can be large and are already indexed.
+  </p>
+</section>
+
+</main>
+</div>
+</body>
+</html>
